@@ -34,6 +34,29 @@ Packages checking (snyl.io)
 - Ability to block JWT using services like Redis
 
 
+Database
+- sequelize migration:create --name add-some-table
+// 00000000000000-your-migration.js
+module.exports = {
+    /**
+     * @param {import('sequelize').QueryInterface} queryInterface
+     * @param {import('sequelize').Sequelize} Sequelize
+     * @returns {Promise<any>}
+    */
+    up: (queryInterface, Sequelize) => {
+        /** migration */
+    },
+    /**
+     * @param {import('sequelize').QueryInterface} queryInterface
+     * @param {import('sequelize').Sequelize} Sequelize
+     * @returns {Promise<any>}
+    */
+    down: (queryInterface, Sequelize) => {
+        /** undo migration */
+    },
+};
+
+
 Debugging
 - Learn Node debugger
 - Learn postman

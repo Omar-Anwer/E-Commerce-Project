@@ -42,7 +42,7 @@ export default [
         },
         rules: {
             // Prettier rules
-            'prettier/prettier': 'error',
+            'prettier/prettier': 'off',
 
             // TypeScript-specific rules
             '@typescript-eslint/no-use-before-define': 'error',

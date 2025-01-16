@@ -1,5 +1,0 @@
-npm config set init.author.name "Your Name"
-npm config set init.author.email "name.lastname@tatvasoft.com"
-npm config set init.author.url "http://www.tatvasoft.com"
-npm config set init.license "MIT"
-npm config set init.version "1.0.0" 

@@ -68,7 +68,6 @@ app.use('/api/v1/', homeRouter);
 //app.use('/api/v1/admin', adminRouter);
 //app.use('/api/v1/user', userRouter);
 
-
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
     //res.status(404).send('Oops!');
     const err = new Error(`Invalid url: ${req.originalUrl}`);
