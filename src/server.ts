@@ -20,11 +20,6 @@ const env = process.env.NODE_ENV;
 const port = process.env.PORT || 3000;
 const address: string = `http://localhost:${port}`;
 
-// Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ limit: '10mb' }));
-app.use(express.static('./public'));
-//app.use(pinoHttp({ logger: logger }));
 
 const allowedOrigins = process.env.CORS_ORIGIN || '';
 const allowedOriginsArray =
@@ -43,9 +38,14 @@ const corsOptions = {
     //   ],
     //   exposeHeaders: []
 };
-app.use(helmet());
-app.use(cors(corsOptions));
+// Middlewares
 
+app.use(cors(corsOptions));
+app.use(helmet());
+app.use(express.urlencoded({ limit: '10mb' }));
+app.use(express.json());
+app.use(express.static('./public'));
+//app.use(pinoHttp({ logger: logger }));
 // Compress all server responses with gzip
 app.use(
     compression({
