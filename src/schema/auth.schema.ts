@@ -3,12 +3,14 @@ import Joi, { ObjectSchema } from 'joi';
 const PASSWORD_REGEX = new RegExp(
     '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!.@#$%^&*])(?=.{8,})'
 );
- const signupSchema: ObjectSchema = Joi.object().keys({
+const signupSchema: ObjectSchema = Joi.object().keys({
     // username: Joi.string().alphanum().min(3).max(10).required(),
-    email: Joi.string().required().email({
-        tlds:  {allow: ['com']},
-    })
-    .message('Please enter a valid email address.'),
+    email: Joi.string()
+        .required()
+        .email({
+            tlds: { allow: ['com'] },
+        })
+        .message('Please enter a valid email address.'),
     password: Joi.string().regex(PASSWORD_REGEX).required().messages({
         'any.only': 'Password must be at least 8 characters',
     }),
@@ -20,9 +22,9 @@ const PASSWORD_REGEX = new RegExp(
     lastName: Joi.string().required(),
 });
 
-// const loginSchema = Joi.object().keys({
-//     email: Joi.string().required(),
-//     password: Joi.string().required(),
-// });
+const loginSchema: ObjectSchema = Joi.object().keys({
+    email: Joi.string().required(),
+    password: Joi.string().required(),
+});
 
 export default signupSchema;

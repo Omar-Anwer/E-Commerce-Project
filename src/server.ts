@@ -3,15 +3,16 @@ import express, { Request, Response, Application, NextFunction } from 'express';
 import logger from './utils/logger.util';
 
 // Import routes
-import authRouter from './routes/api/v1/auth.router';
-import homeRouter from './routes/api/v1/home.router';
-import healthRouter from './routes/api/v1/health.router';
+import authRoutes from './routes/api/v1/auth.router';
+import homeRoutes from './routes/api/v1/home.router';
+import healthRoutes from './routes/api/v1/health.router';
 
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
 
 import config from 'config';
+import path from 'path';
 
 const app: Application = express();
 
@@ -19,7 +20,6 @@ const app: Application = express();
 const env = process.env.NODE_ENV;
 const port = process.env.PORT || 3000;
 const address: string = `http://localhost:${port}`;
-
 
 const allowedOrigins = process.env.CORS_ORIGIN || '';
 const allowedOriginsArray =
@@ -29,7 +29,7 @@ const allowedOriginsArray =
 const corsOptions = {
     origin: allowedOriginsArray, // whitelist foreign domains to allow
     optionSuccessStatus: 200, //Some legacy browsers
-    methods: '*',
+    methods: ['GET', 'POST'],
     // allowedHeaders: [
     //     'access-control-allow-origin',
     //     'authorization',
@@ -38,13 +38,25 @@ const corsOptions = {
     //   ],
     //   exposeHeaders: []
 };
+
 // Middlewares
 
-app.use(cors(corsOptions));
-app.use(helmet());
-app.use(express.urlencoded({ limit: '10mb' }));
-app.use(express.json());
-app.use(express.static('./public'));
+app.use(cors(corsOptions)); // Enable CORS with specific options
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'"],
+        },
+    })
+);
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(express.json({ limit: '10kb' }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'uploads')));
+
 //app.use(pinoHttp({ logger: logger }));
 // Compress all server responses with gzip
 app.use(
@@ -62,11 +74,11 @@ app.use(
 );
 
 // Registering all the routes
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/health', healthRouter);
-app.use('/api/v1/', homeRouter);
-//app.use('/api/v1/admin', adminRouter);
-//app.use('/api/v1/user', userRouter);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/health', healthRoutes);
+app.use('/api/v1/', homeRoutes);
+//app.use('/api/v1/admin', adminRoutes);
+//app.use('/api/v1/user', userRoutes);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
     //res.status(404).send('Oops!');
@@ -82,6 +94,7 @@ app.use((err: Error, req: Request, res: Response) => {
 
 const start = async () => {
     app.listen(port, () => {
+        logger.info('NODE_ENV=',env);
         logger.info(`Server is listening at ${address}....`);
     });
 };

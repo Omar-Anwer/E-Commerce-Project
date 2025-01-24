@@ -31,6 +31,12 @@ const sequelize = new Sequelize(
     `${DB_DIALECT}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${databaseName}`,
     {
         logging: (msg) => logger.info(msg),
+        pool: {
+            max: 10, // Maximum number of connections in the pool
+            min: 0, // Minimum number of connections in the pool
+            acquire: 30000, // Maximum time (in ms) to acquire a connection
+            idle: 10000, // Maximum time (in ms) a connection can be idle
+        },
     }
 );
 

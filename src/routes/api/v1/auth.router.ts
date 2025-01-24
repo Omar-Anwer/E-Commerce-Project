@@ -2,10 +2,25 @@ import { Router } from 'express';
 import { signup } from '../../../controllers/auth.controller';
 import { validateBodyMiddleware } from '../../../middleware/schema.validator';
 import signupSchema from '../../../schema/auth.schema';
+import { createAccountLimiter } from '../../../middleware/rateLimit';
+import cookieParser from 'cookie-parser';
+import hpp from 'hpp';
 
 const router = Router();
 
-router.post('/signup', validateBodyMiddleware(signupSchema), signup);
+// const hppOptions = {
+// whitelist: ['price', 'quantity'],
+// paths: ['/api']
+// }
+// router.use(hpp(hppOptions));
+
+router.use(cookieParser(process.env.COOKIE_SECRET || 'your_secret_key'));
+router.post(
+    '/signup',
+    createAccountLimiter,
+    validateBodyMiddleware(signupSchema),
+    signup
+);
 
 //This route is responsible for handling user login requests. It's used for authenticating users and granting them access to their accounts
 // router.post(
