@@ -22,4 +22,4 @@ const requiredEnvVariables = [
   };
   
   // Run the check
-  checkEnv();
+  //checkEnv();

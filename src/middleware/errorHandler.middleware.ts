@@ -44,13 +44,12 @@ dotenv.config();
 
 const errorHandlerMiddleware = (
     err: Error | CustomError,
-    req: Request,
+    _req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    //logger.error(err);
     logger.error(err.message);
-    logger.error(err.stack);
+    //logger.error(err.stack);
 
     const statusCode = err instanceof CustomError ? err.statusCode : 500;
     res.status(statusCode).json({

@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { signup } from '../../../controllers/auth.controller';
-import { validateBodyMiddleware } from '../../../middleware/schema.validator';
+import { validateBodyMiddleware } from '../../../middleware/schema.validator.middleware';
 import signupSchema from '../../../schema/auth.schema';
-import { createAccountLimiter } from '../../../middleware/rateLimit';
+import { createAccountLimiter } from '../../../middleware/rateLimit.middleware';
 import cookieParser from 'cookie-parser';
 import hpp from 'hpp';
 

@@ -1,7 +1,8 @@
 import express, { Request, Response, Application, NextFunction } from 'express';
 //import pinoHttp from 'pino-http';
 import logger from './utils/logger.util';
-
+import errorHandlerMiddleware from './middleware/errorHandler.middleware';
+import { CustomError } from './errors/custom.error';
 // Import routes
 import authRoutes from './routes/api/v1/auth.router';
 import homeRoutes from './routes/api/v1/home.router';
@@ -15,8 +16,6 @@ import compression from 'compression';
 import config from 'config';
 import path from 'path';
 import dotenv from 'dotenv';
-import errorHandlerMiddleware from './middleware/errorHandler';
-import { CustomError } from './errors/custom.error';
 
 dotenv.config();
 
@@ -96,11 +95,10 @@ app.all('*', (req: Request, res: Response, next: NextFunction) => {
 // Error handling
 app.use(errorHandlerMiddleware);
 
-
 const server = app.listen(port, () => {
     logger.info(`NODE_ENV=${env}`);
-     // await sequelize.sync();
-//         // logger.info('DB connected');
+    // await sequelize.sync();
+    //         // logger.info('DB connected');
     logger.info(`Server is listening at ${address}....`);
 });
 

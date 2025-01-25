@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { Schema } from 'joi';
+import { ValidationError } from '../errors/validation.error';
 
 const validateBodyMiddleware = (schema: Schema): RequestHandler => {
     return (req: Request, res: Response, next: NextFunction) => {
         const { error } = schema.validate(req.body);
         if (error) {
-            return next(new Error(`${error.details[0].message}`));
+            return next(new ValidationError(`${error.details[0].message}`));
         }
         next();
     };
@@ -15,7 +16,7 @@ const validateQueryMiddleware = (schema: Schema): RequestHandler => {
     return (req: Request, res: Response, next: NextFunction) => {
         const { error } = schema.validate(req.query);
         if (error) {
-            return next(new Error(`${error.details[0].message}`));
+            return next(new ValidationError(`${error.details[0].message}`));
         }
         next();
     };

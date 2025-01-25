@@ -1,6 +1,6 @@
 //import { DataTypes, QueryInterface } from 'sequelize';
 
-import User from './user/user.model';
+import { User } from './user/user.model';
 import UserCredentials from './user/userCredentials.model';
 
 // import UserRoles from './user/userRoles.model';
