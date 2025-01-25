@@ -19,10 +19,6 @@ export const UserCredentials = sequelize.define('userCredentials', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
 
     /* Tokens */
     accessToken: {

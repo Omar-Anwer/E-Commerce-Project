@@ -11,7 +11,7 @@
 //         allowedSortDirections: ['asc', 'desc'],
 //     };
 
-//     public async getProducts(req: Request, res: Response) {
+//     public async findProducts(req: Request, res: Response) {
 //         try {
 //             const { filters, sort, page, limit, search, searchFields } =
 //                 req.query;

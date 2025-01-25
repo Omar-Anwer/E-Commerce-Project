@@ -1,8 +1,7 @@
-// import { CustomApiError } from './customApi.error';
+import { CustomError } from './custom.error';
 
-// class BadRequestError extends CustomApiError {
-//     statusCode = 400;
-//     constructor(message: string){
-//         super(message);
-//     }
-// };
+export class BadRequestError extends CustomError {
+    constructor(message: string) {
+        super(message, 400); // 404 Not Found
+    }
+}

@@ -1,15 +1,38 @@
-import { DataTypes, Sequelize } from 'sequelize';
-
+import {
+    DataTypes,
+    InferAttributes,
+    InferCreationAttributes,
+    Model,
+} from 'sequelize';
 import sequelize from '../../config/db.connect';
+import { hashPassword } from '../../utils/hash.util';
 
-const User = sequelize.define(
+export interface UserModel
+    extends Model<
+        InferAttributes<UserModel>,
+        InferCreationAttributes<UserModel>
+    > {
+    id: string;
+    uuid: string;
+    firstName: string;
+    lastName: string;
+    birthDate: string;
+    email: string;
+    password: string;
+    // isVerified?: boolean;
+    // createdBy?: number;
+    // updatedBy?: number;
+    // deletedAt?: Date | null;
+    // consentGivenAt?: Date | null;
+}
+
+export const User = sequelize.define<UserModel>(
     'Users',
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            allowNull: false,
         },
         uuid: {
             type: DataTypes.UUID,
@@ -28,60 +51,53 @@ const User = sequelize.define(
         birthDate: {
             type: DataTypes.DATEONLY,
             allowNull: false,
-            validate: {
-                isAfter: '1940-01-01',
-            },
         },
-        // userName: {
-        //     type: DataTypes.STRING(100),
-        //     unique: true,
-        //     allowNull: false,
-        // },
         email: {
             type: DataTypes.STRING(100),
             unique: true,
             allowNull: false,
-            validate: {
-                isEmail: true,
-            },
         },
-
-        // Indicates whether the user's email or phone is verified.
-        isVerified: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
+        password: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
-
-        /* Audit Logging */
-        // Tracks which admin or system created the user.
-        createdBy: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        // Tracks who last updated the user.
-        updatedBy: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-
-        /* Privacy & Compliance */
-        // Supports soft deletion to comply with GDPR or similar regulations.
-        deletedAt: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
-
-        // Timestamp when the user gave consent to terms or privacy policies.
-        consentGivenAt: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
+        // isVerified: {
+        //     type: DataTypes.BOOLEAN,
+        //     defaultValue: false,
+        //     allowNull: false,
+        // },
+        // createdBy: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: true,
+        // },
+        // updatedBy: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: true,
+        // },
+        // deletedAt: {
+        //     type: DataTypes.DATE,
+        //     allowNull: true,
+        // },
+        // consentGivenAt: {
+        //     type: DataTypes.DATE,
+        //     allowNull: true,
+        // },
     },
     {
-        // createdAt: 'registeredAt',
         timestamps: true,
+        paranoid: true, // Enables soft delete
+        tableName: 'users',
+        hooks: {
+            beforeCreate: async (user) => {
+                if (user.password) {
+                    user.password = await hashPassword(user.password);
+                }
+            },
+            beforeUpdate: async (user) => {
+                if (user.changed('password')) {
+                    user.password = await hashPassword(user.password);
+                }
+            },
+        },
     }
 );
-
-export default User;

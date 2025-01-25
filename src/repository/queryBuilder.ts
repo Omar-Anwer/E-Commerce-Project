@@ -7,20 +7,20 @@ import {
     ModelStatic,
 } from 'sequelize';
 
-interface QueryBuilderConfig {
+export interface QueryBuilderConfig {
     defaultLimit?: number;
     maxLimit?: number;
     allowedFilterOperators?: string[];
     allowedSortDirections?: string[];
 }
 
-interface PaginatedResponse<T> {
+export interface PaginatedResponse<T> {
     totalItems: number;
     totalPages: number;
     data: T[];
 }
 
-class QueryBuilder<T extends Model> {
+export class QueryBuilder<T extends Model> {
     private options: FindAndCountOptions = {};
     private defaultLimit: number;
     private maxLimit: number;
@@ -197,8 +197,6 @@ class QueryBuilder<T extends Model> {
         };
     }
 }
-
-export default QueryBuilder;
 
 // class BaseRepository<T extends Model> {
 //     /**

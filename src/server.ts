@@ -6,6 +6,7 @@ import logger from './utils/logger.util';
 import authRoutes from './routes/api/v1/auth.router';
 import homeRoutes from './routes/api/v1/home.router';
 import healthRoutes from './routes/api/v1/health.router';
+import userRoutes from './routes/api/v1/user.router';
 
 import helmet from 'helmet';
 import cors from 'cors';
@@ -13,8 +14,13 @@ import compression from 'compression';
 
 import config from 'config';
 import path from 'path';
+import dotenv from 'dotenv';
+import errorHandlerMiddleware from './middleware/errorHandler';
+import { CustomError } from './errors/custom.error';
 
-const app: Application = express();
+dotenv.config();
+
+const app = express();
 
 // Environment variables
 const env = process.env.NODE_ENV;
@@ -42,18 +48,19 @@ const corsOptions = {
 // Middlewares
 
 app.use(cors(corsOptions)); // Enable CORS with specific options
-app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            imgSrc: ["'self'"],
-        },
-    })
-);
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-app.use(express.json({ limit: '10kb' }));
+app.use(helmet());
+// app.use(
+//     helmet.contentSecurityPolicy({
+//         directives: {
+//             defaultSrc: ["'self'"],
+//             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+//             styleSrc: ["'self'", "'unsafe-inline'"],
+//             imgSrc: ["'self'"],
+//         },
+//     })
+// );
+app.use(express.urlencoded({ extended: true, limit: '20kb' }));
+app.use(express.json({ limit: '20kb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
@@ -75,44 +82,49 @@ app.use(
 
 // Registering all the routes
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
+//app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/', homeRoutes);
-//app.use('/api/v1/admin', adminRoutes);
-//app.use('/api/v1/user', userRoutes);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
     //res.status(404).send('Oops!');
-    const err = new Error(`Invalid url: ${req.originalUrl}`);
+    const err = new CustomError(`Invalid url: ${req.originalUrl}`, 404);
     next(err.message);
 });
 
 // Error handling
-//app.use(errorMiddleware);
-app.use((err: Error, req: Request, res: Response) => {
-    res.status(400).json({ err });
+app.use(errorHandlerMiddleware);
+
+
+const server = app.listen(port, () => {
+    logger.info(`NODE_ENV=${env}`);
+     // await sequelize.sync();
+//         // logger.info('DB connected');
+    logger.info(`Server is listening at ${address}....`);
 });
 
-const start = async () => {
-    app.listen(port, () => {
-        logger.info('NODE_ENV=',env);
-        logger.info(`Server is listening at ${address}....`);
+process.on('unhandledRejection', (err) => {
+    logger.error(`Unhandled rejection: ${err}`);
+    server.close(() => {
+        logger.error(`Server closed due to unhandled rejection: ${err}`);
+        process.exit(1);
     });
-};
+});
+process.on('SIGTERM', (err) => {
+    logger.error(`SIGTERM received: ${err}`);
+    server.close(() => {
+        logger.error(`Server gracefully shut down: ${err}`);
+        process.exit(1);
+    });
+});
 
-start();
-
-// process.on('SIGTERM', () => {
-//     server.close(() => {
-//       console.log('Server gracefully shut down');
-//       process.exit(0);
-//     });
-//   });
-
-//   process.on('SIGINT', () => {
-//     server.close(() => {
-//       console.log('Server interrupted. Shutting down');
-//       process.exit(1);
-//     });
-//   });
+process.on('SIGINT', (err) => {
+    logger.error(`SIGINT received: ${err}`);
+    server.close(() => {
+        logger.error(`Server interrupted. Shutting down...: ${err}`);
+        process.exit(1);
+    });
+});
 
 export default app;
