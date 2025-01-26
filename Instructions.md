@@ -91,10 +91,27 @@ File Upload
 - Run the file through CDR (Content Disarm & Reconstruct) if applicable type (PDF, DOCX, etc...)
 - Protect the file upload from CSRF attacks
 
+Docker
+------
+add docker-compose.yml
+docker-compose config
+docker-compose up --build
+
+docker exec -it postgres_db psql -U postgres
+
+docker run --restart always --name postgres_db -p 5432:5432 -e POSTGRES_DB=store_dev -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -d postgres
 
 Database
 --------
-- sequelize migration:create --name add-some-table
+- Use underscore_names instead of CamelCase
+- Table names should be plural
+- Don't use ambiguous column names
+- When possible, name foreign key columns the same as the columns they refer to
+
+- Use Cases of Transactions
+- Ensuring data consistency in multi-step operations (e.g., placing an order while updating stock).
+- Rollback changes in case of an error.
+- Maintaining integrity during concurrent operations.
 
 
 Debugging
@@ -154,6 +171,7 @@ Commenting
 - Properly comment everything
 
 Documentation
+-------------
 - Using swagger for API documentation
 - Using JSdoc for code documentation
 - Proper response and request structure through API’s

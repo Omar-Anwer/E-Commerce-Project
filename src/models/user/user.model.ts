@@ -56,10 +56,17 @@ export const User = sequelize.define<UserModel>(
             type: DataTypes.STRING(100),
             unique: true,
             allowNull: false,
+            validate: {
+                isEmail: true,
+                notEmpty: true,
+            },
         },
         password: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                len: [8, 100],
+            },
         },
         // isVerified: {
         //     type: DataTypes.BOOLEAN,
@@ -69,14 +76,12 @@ export const User = sequelize.define<UserModel>(
         // createdBy: {
         //     type: DataTypes.INTEGER,
         //     allowNull: true,
+        //     comment: "Stores the user ID or some identifier of the user who created the record."
         // },
         // updatedBy: {
         //     type: DataTypes.INTEGER,
         //     allowNull: true,
-        // },
-        // deletedAt: {
-        //     type: DataTypes.DATE,
-        //     allowNull: true,
+        //     comment: "Stores the user ID or some identifier of the user who updated the record."
         // },
         // consentGivenAt: {
         //     type: DataTypes.DATE,
@@ -84,20 +89,34 @@ export const User = sequelize.define<UserModel>(
         // },
     },
     {
-        timestamps: true,
-        paranoid: true, // Enables soft delete
         tableName: 'users',
+        //underscored: true,
+        timestamps: true, // Adds createdAt and updatedAt
+        // paranoid: true,   // Adds a deletedAt
         hooks: {
-            beforeCreate: async (user) => {
+            beforeCreate: async (user: UserModel) => {
                 if (user.password) {
                     user.password = await hashPassword(user.password);
                 }
             },
-            beforeUpdate: async (user) => {
+            beforeUpdate: async (user: UserModel) => {
                 if (user.changed('password')) {
                     user.password = await hashPassword(user.password);
                 }
             },
         },
+        indexes: [
+            {
+                fields: ['uuid'],
+                unique: true,
+            },
+            {
+                fields: ['firstName'],
+            },
+            {
+                unique: true,
+                fields: ['email'],
+            },
+        ],
     }
 );

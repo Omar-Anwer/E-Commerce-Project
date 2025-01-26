@@ -8,7 +8,6 @@ const Product = sequelize.define(
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            allowNull: false,
         },
         //   vendorId: {
         //     type: DataTypes.INTEGER,
@@ -20,6 +19,16 @@ const Product = sequelize.define(
         //     onDelete: 'SET NULL',
         //     onUpdate: 'CASCADE',
         //   },
+        // categoryId: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: true,
+        //     references: {
+        //         model: 'ProductCategories',
+        //         key: 'categoryId',
+        //     },
+        //     onDelete: 'SET NULL',
+        //     onUpdate: 'CASCADE',
+        // },
         name: {
             type: DataTypes.STRING(255),
             allowNull: false,
@@ -42,23 +51,17 @@ const Product = sequelize.define(
                 min: 0,
             },
         },
-        categoryId: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: 'ProductCategories',
-                key: 'categoryId',
-            },
-            onDelete: 'SET NULL',
-            onUpdate: 'CASCADE',
-        },
-        deletedAt: {
-            type: DataTypes.DATE,
-            allowNull: true,
+        isPublished: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: false,
         },
     },
     {
+        tableName: 'products',
+        underscored: true,
         timestamps: true,
+        // paranoid: true,   // Adds a deletedAt
         indexes: [
             {
                 unique: false,

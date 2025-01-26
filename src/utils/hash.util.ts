@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
+import logger from './logger.util';
 
 dotenv.config();
 
-// Typically a value between 10 and 12
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
 const PEPPER = String(process.env.BCRYPT_SECRET_PEPPER) || 'defaultPepperValue';
 
@@ -13,7 +13,7 @@ const hashPassword = async (password: string): Promise<string> => {
         const hashedPassword = await bcrypt.hash(pepperedPassword, SALT_ROUNDS);
         return hashedPassword;
     } catch (err) {
-        console.error(err);
+        logger.error(err);
         throw new Error('Error hashing password');
     }
 };
@@ -22,8 +22,12 @@ const verifyPassword = async (
     password: string,
     hash: string
 ): Promise<boolean> => {
-    const isValid = await bcrypt.compare(password + PEPPER, hash);
-    return isValid;
+    try {
+        return await bcrypt.compare(password + PEPPER, hash);
+    } catch (err) {
+        logger.error(err);
+        throw new Error('Error verifying password');
+    }
 };
 
 const generateSalt = async (rounds?: number) => {

@@ -1,43 +1,36 @@
 import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
 import logger from '../utils/logger.util';
+//import dbConfig from './db.config';
+const dbConfig = require('./db.config.js');
 
-dotenv.config();
-const {
-    NODE_ENV,
-    DB_HOST,
-    DB_PORT,
-    DB_USERNAME,
-    DB_PASSWORD,
-    DB_DIALECT,
-    DB_NAME,
-    DB_TEST_NAME,
-} = process.env;
+// const dbConfig = require();
 
-const databaseName = NODE_ENV == 'test' ? DB_TEST_NAME : DB_NAME;
+// Determine the environment (default to 'development' if not set)
+const env = process.env.NODE_ENV || 'development';
 
-// const sequelize = new Sequelize(
-//     String(databaseName),
-//     String(DB_USERNAME),
-//     String(DB_PASSWORD),
-//     {
-//         dialect: DB_DIALECT as Dialect,
-//         host: String(DB_HOST),
-//         logging: (msg) => logger.info(`Sequelize: ${msg}`),
-//     }
-// );
+// Get the configuration for the current environment
+const config = dbConfig[env];
 
+// Initialize Sequelize with the configuration
 const sequelize = new Sequelize(
-    `${DB_DIALECT}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${databaseName}`,
+    `${config.dialect}://${config.username}:${config.password}@${config.host}:${config.port}/${config.database}`,
     {
-        logging: (msg) => logger.info(msg),
-        pool: {
-            max: 10, // Maximum number of connections in the pool
-            min: 0, // Minimum number of connections in the pool
-            acquire: 30000, // Maximum time (in ms) to acquire a connection
-            idle: 10000, // Maximum time (in ms) a connection can be idle
-        },
+
+        logging: config.logging ? (msg) => logger.info(`Sequelize: ${msg}`) : false, // Custom logging function
+        pool: config.pool, // Use the pool configuration from dbConfig
     }
 );
+
+// Test the database connection
+export const dbTestConnection = async () => {
+    try {
+        await sequelize.authenticate();
+        // await sequelize.sync(/*{ force: true }*/);
+        logger.info('Database connection established successfully.');
+    } catch (error) {
+        logger.error('Unable to connect to the database:', error);
+        throw error;
+    }
+};
 
 export default sequelize;

@@ -32,10 +32,11 @@ export default {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            //List of IP addresses allowed to interact with the account.
             ipWhitelist: {
                 type: DataTypes.ARRAY(DataTypes.STRING),
                 defaultValue: [],
+                comment:
+                    'List of IP addresses allowed to interact with the account.',
             },
         });
     },

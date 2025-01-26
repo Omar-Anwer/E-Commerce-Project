@@ -29,30 +29,33 @@ export const UserCredentials = sequelize.define('userCredentials', {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
     },
-    // Stores a token for email/phone verification purposes.
     verificationToken: {
         type: DataTypes.STRING,
         allowNull: true,
+        comment: 'Stores a token for email/phone verification purposes.',
     },
     /*Account Recovery*/
     resetPasswordToken: {
         type: DataTypes.STRING,
         allowNull: true,
+        comment: 'Stores a token for password reset purposes.',
     },
     resetPasswordExpires: {
         type: DataTypes.DATE,
         allowNull: true,
     },
-    // Tracks the number of failed login attempts for account lockout policies.
     failedLoginAttempts: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
         allowNull: false,
+        comment:
+            'Stores the number of failed login attempts for account lockout policies.',
     },
-    // Timestamp of the last password update to invalidate tokens issued before this time.
     passwordChangedAt: {
         type: DataTypes.DATE,
         allowNull: true,
+        comment:
+            'Stores the timestamp of the last password update to invalidate tokens issued before this time.',
     },
     twoFactorEnabled: {
         type: DataTypes.BOOLEAN,
@@ -63,11 +66,11 @@ export const UserCredentials = sequelize.define('userCredentials', {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    //Unique API key for user-specific API access.
     apiKey: {
         type: DataTypes.STRING,
         unique: true,
         allowNull: true,
+        comment: 'Stores a unique API key for user-specific API access.',
     },
 });
 
