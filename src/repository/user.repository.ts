@@ -4,11 +4,12 @@ import {
     //UserModel,
     UserCreationAttributes,
 } from '../models/user/user.model'; // Import your Sequelize User model
+import logger from '../utils/logger.util';
 
 class UserRepository {
-    async save(userCreationAttributes: UserCreationAttributes) {
-        console.log('save', userCreationAttributes);
-        const savedUser = await User.create({ ...userCreationAttributes });
+    async create(creationAttributes: UserCreationAttributes) {
+        logger.info(creationAttributes);
+        const savedUser = await User.create({ ...creationAttributes });
         return savedUser;
     }
     async findByEmail(email: string) {

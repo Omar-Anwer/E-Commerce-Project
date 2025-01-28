@@ -1,13 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
 import UserRepository from '../repository/user.repository';
 import { CustomError } from '../errors/custom.error';
 import { BadRequestError } from '../errors/badRequest.error';
 
 import { User, UserCreationAttributes } from '../models/user/user.model';
-import { fromDto, mapToCreationAttributes } from '../dtos/user.dto';
+import {
+    fromDto,
+    mapToCreationAttributes,
+    mapToUser,
+    toDto,
+} from '../dtos/user.dto';
+import { UnauthorizedError } from '../errors/unauthorized.error';
+import { verifyPassword } from '../utils/hash.util';
+import logger from '../utils/logger.util';
 
+dotenv.config();
 class authService {
     private userRepository: UserRepository;
     //private jwtUtil: JwtUtil;
@@ -15,37 +26,52 @@ class authService {
         this.userRepository = new UserRepository();
     }
 
-    private async validateUserRegistration(
-        userCreationAttributes: UserCreationAttributes
-    ) {
-        const isRegisteredUser = await this.userRepository.exists(
-            userCreationAttributes
-        );
-
-        if (isRegisteredUser) {
+    private async checkUserExist(user: User) {
+        const isUserExists = await this.userRepository.exists(user);
+        return Boolean(isUserExists);
+    }
+    private async validateUserRegistration(user: User) {
+        const isUserExists = await this.checkUserExist(user);
+        if (isUserExists) {
             throw new BadRequestError('User already exists');
         }
     }
 
-    async signup(req: Request, res: Response, next: NextFunction) {
-        const userCreationAttributes = mapToCreationAttributes(req.body);
-        await this.validateUserRegistration(userCreationAttributes);
-        const createdUser = await this.userRepository.save({
-            ...userCreationAttributes,
-        });
+    async register(req: Request, res: Response, next: NextFunction) {
+        const user = mapToUser(req.body) as User;
+        await this.validateUserRegistration(user);
+        const createdUser = await this.userRepository.create({ ...user });
         return createdUser;
     }
 
     async login(req: Request, res: Response, next: NextFunction) {
-        // const { email, password } = req.body;
-        // const user = await User.findOne({ where: { email } });
-        // if (!user) return res.status(401).json({ message: 'Invalid credentials' });
-        // const isMatch = await bcrypt.compare(password, user.password);
-        // if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
-        // const accessToken = jwt.sign({ userId: user.id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-        // const refreshToken = jwt.sign({ userId: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+        const { email, password } = req.body;
+
+        const user = await this.userRepository.findByEmail(email);
+        if (!user) {
+            logger.error('wrong email');
+            throw new UnauthorizedError('Invalid credentials');
+        }
+
+        const isMatch = await verifyPassword(password, user.password);
+        if (!isMatch) {
+            logger.error('wrong password');
+            throw new UnauthorizedError('Invalid credentials');
+        }
+
+        const accessToken = jwt.sign(
+            { userId: user.id },
+            'process.env.JWT_ACCESS_SECRET',
+            { expiresIn: '15m' }
+        );
+        const refreshToken = jwt.sign(
+            { userId: user.id },
+            'process.env.REFRESH_TOKEN_SECRET',
+            { expiresIn: '7d' }
+        );
         // await Token.create({ token: refreshToken, userId: user.id });
-        // res.json({ accessToken, refreshToken });
+
+        return { accessToken, refreshToken };
     }
 
     async logout(req: Request, res: Response, next: NextFunction) {

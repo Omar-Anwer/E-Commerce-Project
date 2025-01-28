@@ -3,7 +3,7 @@ import { Router } from 'express';
 import authController from '../../../controllers/auth.controller';
 
 import { validateBodyMiddleware } from '../../../middleware/schema.validator.middleware';
-import signupSchema from '../../../schema/auth.schema';
+import { loginSchema, signupSchema } from '../../../schema/auth.schema';
 import { createAccountLimiter } from '../../../middleware/rateLimit.middleware';
 import cookieParser from 'cookie-parser';
 import hpp from 'hpp';
@@ -18,25 +18,19 @@ const router = Router();
 
 router.use(cookieParser(process.env.COOKIE_SECRET || 'your_secret_key'));
 router.post(
-    '/signup',
+    '/register',
     createAccountLimiter,
     validateBodyMiddleware(signupSchema),
     // verify Authentication
-    authController.signup
+    authController.register
 );
 
 //This route is responsible for handling user login requests. It's used for authenticating users and granting them access to their accounts
-// router.post(
-//     '/login',
-//     validateBodyMiddleware(loginSchema),
-//     login
-// );
-
-//Here, we have a route for rendering the login page. Users can access this route to view and interact with the login form
-// router.get(
-//     '/login',
-//     login
-// );
+router.post(
+    '/login',
+    validateBodyMiddleware(loginSchema),
+    authController.login
+);
 
 // // Admin
 // router.use(authService.allowedTo('admin', 'manager'));

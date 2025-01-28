@@ -9,8 +9,8 @@ import sequelize from '../../config/db.connect';
 import { hashPassword } from '../../utils/hash.util';
 
 export interface User extends Model {
-    id: number;
-    uuid: string;
+    id?: number;
+    uuid?: string;
     firstName: string;
     lastName: string;
     birthDate: Date;

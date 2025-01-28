@@ -15,6 +15,7 @@ import homeRoutes from './routes/api/v1/home.router';
 import healthRoutes from './routes/api/v1/health.router';
 import userRoutes from './routes/api/v1/user.router';
 import { NotFoundError } from './errors/notFound.error';
+import cookieParser from 'cookie-parser';
 
 // Load environment variables
 dotenv.config();
@@ -38,6 +39,7 @@ const corsOptions = {
 };
 
 // Middleware
+app.use(cookieParser());
 app.use(cors(corsOptions)); // Enable CORS with specific options
 app.use(helmet()); // Set security HTTP headers
 app.use(express.json({ limit: '20kb' })); // Parse JSON requests

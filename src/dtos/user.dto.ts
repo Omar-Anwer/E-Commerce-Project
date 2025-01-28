@@ -4,9 +4,9 @@ import { User, UserCreationAttributes } from '../models/user/user.model';
 export interface UserDto {
     id?: string;
     email: string;
-    firstName?: string;
-    lastName?: string;
-    birthDate?: string;
+    firstName: string;
+    lastName: string;
+    birthDate: string | Date;
 }
 
 /**
@@ -37,18 +37,33 @@ const userConfig = { language: 'fr' };
 const config = merge({}, defaultConfig, userConfig);
 console.log(config);  // Output: { theme: 'dark', language: 'fr' }
  */
-export function fromDto(userDto: UserDto): Partial<InstanceType<typeof User>> {
+export function fromDto(userDto: UserDto): User {
     // Define default values for the model
     const userModel: Partial<InstanceType<typeof User>> = {
         //isVerified: false, // Example: Default to unverified
     };
-    const modelData = merge({}, userModel, userDto);
+
+    // Merge defaults with the DTO
+    const modelData = merge({}, userModel, userDto) as User;
     return modelData;
     // Exclude `id` to prevent unintended updates
-    //return omit(modelData, ['id']);
+    // return omit(modelData, ['id']);
 }
 
 export function mapToCreationAttributes(user: any): UserCreationAttributes {
+    // Map the User instance to the UserCreationAttributes format
+    const userData: UserCreationAttributes = pick(user, [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'birthDate',
+        'password',
+    ]);
+    return userData;
+}
+
+export function mapToUser(user: any): Partial<User> {
     // Map the User instance to the UserCreationAttributes format
     const userData: UserCreationAttributes = pick(user, [
         'id',
