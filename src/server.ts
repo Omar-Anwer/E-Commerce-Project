@@ -66,14 +66,16 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/', homeRoutes);
 
-// 404 Handler
-app.all('*', (req: Request, res: Response, next: NextFunction) => {
-    const err = new CustomError(`Invalid URL: ${req.originalUrl}`, 404);
-    next(err);
-});
-
-// Error handling middleware
+// Error handling middleware (should be at the very end)
 app.use(errorHandlerMiddleware);
+
+// 404 Handler
+// app.all('*', (req: Request, res: Response, next: NextFunction) => {
+//     const err = new CustomError(`Invalid URL: ${req.originalUrl}`, 404);
+//     next(err);
+// });
+
+
 
 // Database connection test
 dbTestConnection();

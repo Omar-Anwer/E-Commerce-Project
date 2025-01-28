@@ -1,3 +1,16 @@
+Categories
+----------
+Food
+
+
+Subcategories
+----------
+Grains/Cereals
+Dairy
+Seafood
+
+
+
 module.exports = {
   up: async (queryInterface) => {
     await queryInterface.bulkInsert('Products', [

@@ -1,9 +1,6 @@
 import { Sequelize } from 'sequelize';
 import logger from '../utils/logger.util';
-//import dbConfig from './db.config';
 const dbConfig = require('./db.config.js');
-
-// const dbConfig = require();
 
 // Determine the environment (default to 'development' if not set)
 const env = process.env.NODE_ENV || 'development';
@@ -15,9 +12,10 @@ const config = dbConfig[env];
 const sequelize = new Sequelize(
     `${config.dialect}://${config.username}:${config.password}@${config.host}:${config.port}/${config.database}`,
     {
-
-        logging: config.logging ? (msg) => logger.info(`Sequelize: ${msg}`) : false, // Custom logging function
-        pool: config.pool, // Use the pool configuration from dbConfig
+        logging: config.logging
+            ? (msg) => logger.info(`Sequelize: ${msg}`)
+            : false,
+        pool: config.pool,
     }
 );
 

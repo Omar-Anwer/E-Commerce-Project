@@ -10,7 +10,7 @@ const apiLimiter = rateLimit({
 
 const createAccountLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 Hr
-    limit: 3,
+    limit: 10,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     message: 'Too many requests from this IP, please try again later.',

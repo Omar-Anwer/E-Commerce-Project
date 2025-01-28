@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { signup } from '../../../controllers/auth.controller';
+// import { signup } from '../../../controllers/auth.controller';
+import authController from '../../../controllers/auth.controller';
+
 import { validateBodyMiddleware } from '../../../middleware/schema.validator.middleware';
 import signupSchema from '../../../schema/auth.schema';
 import { createAccountLimiter } from '../../../middleware/rateLimit.middleware';
@@ -19,7 +21,8 @@ router.post(
     '/signup',
     createAccountLimiter,
     validateBodyMiddleware(signupSchema),
-    signup
+    // verify Authentication
+    authController.signup
 );
 
 //This route is responsible for handling user login requests. It's used for authenticating users and granting them access to their accounts

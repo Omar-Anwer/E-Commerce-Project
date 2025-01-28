@@ -1,4 +1,6 @@
-import Joi, { ObjectSchema } from 'joi';
+import coreJoi, { ObjectSchema } from 'joi';
+import joiDate from '@joi/date';
+const Joi = coreJoi.extend(joiDate) as typeof coreJoi;
 
 const PASSWORD_REGEX = new RegExp(
     '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!.@#$%^&*])(?=.{8,})'
@@ -20,6 +22,7 @@ const signupSchema: ObjectSchema = Joi.object().keys({
     //     .messages({ 'any.only': 'Passwords do not match' }),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
+    birthDate: Joi.date().format('YYYY-MM-DD'),
 });
 
 const loginSchema: ObjectSchema = Joi.object().keys({

@@ -1,20 +1,19 @@
-import { Request, Response } from 'express';
-import logger from '../utils/logger.util';
+import { NextFunction, Request, Response } from 'express';
+import authService from '../services/auth.service';
 
-const signup = async (req: Request, res: Response) => {
-    try {
-        // Cookies that have not been signed
-        console.log('Cookies: ', req.cookies);
-
-        // Cookies that have been signed
-        console.log('Signed Cookies: ', req.signedCookies);
-        res.status(201).json({
-            message: 'Signed up successfully',
-        });
-    } catch (err) {
-        logger.error(err);
-        //   next(new Error(`${err}`));
+class authController {
+    async signup(req: Request, res: Response, next: NextFunction) {
+        try {
+            const user = await authService.signup(req, res, next);
+            res.status(201).json({
+                success: true,
+                message: 'User registered successfully',
+                user,
+            });
+        } catch (error) {
+            next(error);  // Pass the error to the global error handler
+        }
     }
-};
+}
 
-export { signup };
+export default new authController();

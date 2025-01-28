@@ -3,31 +3,41 @@ import {
     InferAttributes,
     InferCreationAttributes,
     Model,
+    Optional,
 } from 'sequelize';
 import sequelize from '../../config/db.connect';
 import { hashPassword } from '../../utils/hash.util';
 
-export interface UserModel
-    extends Model<
-        InferAttributes<UserModel>,
-        InferCreationAttributes<UserModel>
-    > {
-    id: string;
-    uuid: string;
-    firstName: string;
-    lastName: string;
-    birthDate: string;
+export interface User extends Model {
+    id: number;
     email: string;
     password: string;
-    // isVerified?: boolean;
-    // createdBy?: number;
-    // updatedBy?: number;
-    // deletedAt?: Date | null;
-    // consentGivenAt?: Date | null;
 }
 
-export const User = sequelize.define<UserModel>(
-    'Users',
+// Define User model attributes
+// export interface UserAttributes {
+//     id?: number;
+//     uuid?: string;
+//     firstName: string;
+//     lastName: string;
+//     birthDate: Date; // Use string or Date depending on your implementation
+//     email: string;
+//     password: string;
+//     createdAt?: Date;
+//     updatedAt?: Date;
+// }
+
+// Attributes required for user creation
+export interface UserCreationAttributes {
+    firstName: string;
+    lastName: string;
+    birthDate: Date;
+    email: string;
+    password: string;
+}
+
+export const User = sequelize.define(
+    'User',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -58,65 +68,31 @@ export const User = sequelize.define<UserModel>(
             allowNull: false,
             validate: {
                 isEmail: true,
-                notEmpty: true,
             },
         },
         password: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                len: [8, 100],
+                len: [3, 100],
             },
         },
-        // isVerified: {
-        //     type: DataTypes.BOOLEAN,
-        //     defaultValue: false,
-        //     allowNull: false,
-        // },
-        // createdBy: {
-        //     type: DataTypes.INTEGER,
-        //     allowNull: true,
-        //     comment: "Stores the user ID or some identifier of the user who created the record."
-        // },
-        // updatedBy: {
-        //     type: DataTypes.INTEGER,
-        //     allowNull: true,
-        //     comment: "Stores the user ID or some identifier of the user who updated the record."
-        // },
-        // consentGivenAt: {
-        //     type: DataTypes.DATE,
-        //     allowNull: true,
-        // },
     },
     {
+        // sequelize,
         tableName: 'users',
-        //underscored: true,
         timestamps: true, // Adds createdAt and updatedAt
-        // paranoid: true,   // Adds a deletedAt
         hooks: {
-            beforeCreate: async (user: UserModel) => {
+            beforeCreate: async (user: User) => {
                 if (user.password) {
                     user.password = await hashPassword(user.password);
                 }
             },
-            beforeUpdate: async (user: UserModel) => {
+            beforeUpdate: async (user: User) => {
                 if (user.changed('password')) {
                     user.password = await hashPassword(user.password);
                 }
             },
         },
-        indexes: [
-            {
-                fields: ['uuid'],
-                unique: true,
-            },
-            {
-                fields: ['firstName'],
-            },
-            {
-                unique: true,
-                fields: ['email'],
-            },
-        ],
     }
 );
