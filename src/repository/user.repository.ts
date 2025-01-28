@@ -1,4 +1,4 @@
-import { ModelStatic, Transaction } from 'sequelize';
+import { Op, ModelStatic, Transaction } from 'sequelize';
 import {
     User,
     //UserModel,
@@ -13,6 +13,31 @@ class UserRepository {
     }
     async findByEmail(email: string) {
         return await User.findOne({ where: { email } });
+    }
+
+    async isExists(user: Partial<User>): Promise<boolean> {
+        const { id, email, uuid } = user;
+
+        // Only add the valid conditions to the where clause
+        const conditions = {
+            ...(id && { id }),
+            ...(email && { email }),
+            ...(uuid && { uuid }),
+        };
+
+        // If no conditions exist, return false immediately
+        if (Object.keys(conditions).length === 0) {
+            return false;
+        }
+
+        // Check if the user exists
+        const userExists = await User.findOne({
+            where: { [Op.or]: [conditions] },
+            attributes: ['id'],
+            raw: true,
+        });
+
+        return Boolean(userExists);
     }
 }
 

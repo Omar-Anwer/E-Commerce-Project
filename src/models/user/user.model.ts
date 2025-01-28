@@ -10,8 +10,12 @@ import { hashPassword } from '../../utils/hash.util';
 
 export interface User extends Model {
     id: number;
+    uuid: string;
     email: string;
     password: string;
+    firstName: string;
+    lastName: string;
+    birthDate: Date;
 }
 
 // Define User model attributes

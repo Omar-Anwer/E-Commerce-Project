@@ -14,13 +14,20 @@ class authService {
         this.userRepository = new UserRepository();
     }
 
-    async checkUserRegistration(
+    private async validateUserRegistration(
         userCreationAttributes: UserCreationAttributes
-    ): Promise<boolean> {
-        const existingUser = await this.userRepository.findByEmail(
-            userCreationAttributes.email
+    ) {
+        // const existingUser = await this.userRepository.findByEmail(
+        //     userCreationAttributes.email
+        // );
+        // return !!existingUser;
+        const isRegisteredUser = await this.userRepository.isExists(
+            userCreationAttributes
         );
-        return !!existingUser;
+
+        if (isRegisteredUser) {
+            throw new BadRequestError('User already exists');
+        }
     }
 
     async signup(req: Request, res: Response, next: NextFunction) {
@@ -33,13 +40,8 @@ class authService {
             password,
         };
 
-        const isRegisteredUser = await this.checkUserRegistration(
-            userCreationAttributes
-        );
+        await this.validateUserRegistration(userCreationAttributes);
 
-        if (isRegisteredUser) {
-            throw new BadRequestError('User already exists');
-        }
         const createdUser = await this.userRepository.save({
             ...userCreationAttributes,
         });

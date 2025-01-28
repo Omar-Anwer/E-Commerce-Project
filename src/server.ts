@@ -4,10 +4,9 @@ import cors from 'cors';
 import compression from 'compression';
 import path from 'path';
 import dotenv from 'dotenv';
-import config from 'config';
+//import config from 'config';
 import logger from './utils/logger.util';
 import errorHandlerMiddleware from './middleware/errorHandler.middleware';
-import { CustomError } from './errors/custom.error';
 import { dbTestConnection } from './config/db.connect';
 
 // Import routes
@@ -15,6 +14,7 @@ import authRoutes from './routes/api/v1/auth.router';
 import homeRoutes from './routes/api/v1/home.router';
 import healthRoutes from './routes/api/v1/health.router';
 import userRoutes from './routes/api/v1/user.router';
+import { NotFoundError } from './errors/notFound.error';
 
 // Load environment variables
 dotenv.config();
@@ -66,19 +66,15 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/', homeRoutes);
 
-// Error handling middleware (should be at the very end)
-app.use(errorHandlerMiddleware);
-
-// 404 Handler
-// app.all('*', (req: Request, res: Response, next: NextFunction) => {
-//     const err = new CustomError(`Invalid URL: ${req.originalUrl}`, 404);
-//     next(err);
-// });
-
-
+app.all('*', (req: Request, res: Response, next: NextFunction) => {
+    throw new NotFoundError(`Invalid URL: ${req.originalUrl}`);
+});
 
 // Database connection test
 dbTestConnection();
+
+// Error handling middleware (should be at the very end)
+app.use(errorHandlerMiddleware);
 
 // Start the server
 const server = app.listen(port, () => {

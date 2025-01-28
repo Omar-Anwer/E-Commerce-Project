@@ -11,7 +11,7 @@ class authController {
                 user,
             });
         } catch (error) {
-            next(error);  // Pass the error to the global error handler
+            next(error); // Pass the error to the global error handler
         }
     }
 }
