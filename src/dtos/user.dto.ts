@@ -1,29 +1,18 @@
 import { merge, pick, omit } from 'lodash';
-import { User } from '../models/user/user.model';
+import { User, UserCreationAttributes } from '../models/user/user.model';
 
 export interface UserDto {
-    id: string;
+    id?: string;
     email: string;
     firstName?: string;
     lastName?: string;
     birthDate?: string;
 }
 
-// export interface User {
-//     id: string;
-//     email: string;
-//     firstName?: string;
-//     lastName?: string;
-//     birthDate?: string;
-// }
-
 /**
  * Converts a Sequelize model instance or raw database object into a UserDto.
  * @param user - The source object (instance of UserModel or plain object) to transform.
  * @returns A UserDto object.
- * @example
- * const user = await User.findByPk(1);
- * const userDto = toDto(user);
  */
 export function toDto(user: InstanceType<typeof User>): UserDto {
     const userData = user.toJSON(); // Convert Sequelize instance to plain object
@@ -42,24 +31,32 @@ export function toDto(user: InstanceType<typeof User>): UserDto {
  * Default values for the model are defined within the function.
  * @param dto - The UserDto object to transform.
  * @returns A Sequelize model-compatible object.
- * @example
- * const userDto = {
- *       email: 'john.doe@example.com',
- *      firstName: 'John',
- *      lastName: 'Doe',
- *      birthDate: '1990-01-01',
- *   };
- *   const user = fromDto(userDto);
+ * const defaultConfig = { theme: 'dark', language: 'en' };
+const userConfig = { language: 'fr' };
+
+const config = merge({}, defaultConfig, userConfig);
+console.log(config);  // Output: { theme: 'dark', language: 'fr' }
  */
-export function fromDto(dto: UserDto): Partial<InstanceType<typeof User>> {
+export function fromDto(userDto: UserDto): Partial<InstanceType<typeof User>> {
     // Define default values for the model
-    const modelDefaults: Partial<InstanceType<typeof User>> = {
+    const userModel: Partial<InstanceType<typeof User>> = {
         //isVerified: false, // Example: Default to unverified
     };
-
-    // Merge defaults with the DTO
-    const modelData = merge({}, modelDefaults, dto);
-
+    const modelData = merge({}, userModel, userDto);
+    return modelData;
     // Exclude `id` to prevent unintended updates
-    return omit(modelData, ['id']);
+    //return omit(modelData, ['id']);
+}
+
+export function mapToCreationAttributes(user: any): UserCreationAttributes {
+    // Map the User instance to the UserCreationAttributes format
+    const userData: UserCreationAttributes = pick(user, [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'birthDate',
+        'password',
+    ]);
+    return userData;
 }

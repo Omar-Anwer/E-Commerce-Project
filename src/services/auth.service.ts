@@ -6,6 +6,7 @@ import { CustomError } from '../errors/custom.error';
 import { BadRequestError } from '../errors/badRequest.error';
 
 import { User, UserCreationAttributes } from '../models/user/user.model';
+import { fromDto, mapToCreationAttributes } from '../dtos/user.dto';
 
 class authService {
     private userRepository: UserRepository;
@@ -17,11 +18,7 @@ class authService {
     private async validateUserRegistration(
         userCreationAttributes: UserCreationAttributes
     ) {
-        // const existingUser = await this.userRepository.findByEmail(
-        //     userCreationAttributes.email
-        // );
-        // return !!existingUser;
-        const isRegisteredUser = await this.userRepository.isExists(
+        const isRegisteredUser = await this.userRepository.exists(
             userCreationAttributes
         );
 
@@ -31,17 +28,8 @@ class authService {
     }
 
     async signup(req: Request, res: Response, next: NextFunction) {
-        const { firstName, lastName, birthDate, email, password } = req.body;
-        const userCreationAttributes = {
-            firstName,
-            lastName,
-            birthDate,
-            email,
-            password,
-        };
-
+        const userCreationAttributes = mapToCreationAttributes(req.body);
         await this.validateUserRegistration(userCreationAttributes);
-
         const createdUser = await this.userRepository.save({
             ...userCreationAttributes,
         });

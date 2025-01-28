@@ -15,14 +15,14 @@ class UserRepository {
         return await User.findOne({ where: { email } });
     }
 
-    async isExists(user: Partial<User>): Promise<boolean> {
+    async exists(user: Partial<User>): Promise<boolean> {
         const { id, email, uuid } = user;
 
         // Only add the valid conditions to the where clause
         const conditions = {
             ...(id && { id }),
-            ...(email && { email }),
             ...(uuid && { uuid }),
+            ...(email && { email }),
         };
 
         // If no conditions exist, return false immediately
