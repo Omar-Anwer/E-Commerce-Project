@@ -11,25 +11,14 @@ import { hashPassword } from '../../utils/hash.util';
 export interface User extends Model {
     id: number;
     uuid: string;
-    email: string;
-    password: string;
     firstName: string;
     lastName: string;
     birthDate: Date;
+    email: string;
+    password: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
-
-// Define User model attributes
-// export interface UserAttributes {
-//     id?: number;
-//     uuid?: string;
-//     firstName: string;
-//     lastName: string;
-//     birthDate: Date; // Use string or Date depending on your implementation
-//     email: string;
-//     password: string;
-//     createdAt?: Date;
-//     updatedAt?: Date;
-// }
 
 // Attributes required for user creation
 export interface UserCreationAttributes {
@@ -83,7 +72,6 @@ export const User = sequelize.define(
         },
     },
     {
-        // sequelize,
         tableName: 'users',
         timestamps: true, // Adds createdAt and updatedAt
         hooks: {
