@@ -16,6 +16,7 @@ import healthRoutes from './routes/api/v1/health.router';
 import userRoutes from './routes/api/v1/user.router';
 import { NotFoundError } from './errors/notFound.error';
 import cookieParser from 'cookie-parser';
+import { PERMISSIONS } from './config/roles';
 
 // Load environment variables
 dotenv.config();
@@ -37,6 +38,8 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
     credentials: true, // Allow credentials (e.g., cookies)
 };
+
+console.log(PERMISSIONS);
 
 // Middleware
 app.use(cookieParser());

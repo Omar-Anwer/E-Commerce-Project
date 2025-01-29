@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 import UserRepository from '../repository/user.repository';
-import { CustomError } from '../errors/custom.error';
 import { BadRequestError } from '../errors/badRequest.error';
 
 import { User, UserCreationAttributes } from '../models/user/user.model';
@@ -16,12 +13,15 @@ import {
 } from '../dtos/user.dto';
 import { UnauthorizedError } from '../errors/unauthorized.error';
 import { verifyPassword } from '../utils/hash.util';
+import { generateAccessToken, generateRefreshToken } from '../utils/jwt.util';
 import logger from '../utils/logger.util';
 
 dotenv.config();
+
+const refreshTokens = [];
+
 class authService {
     private userRepository: UserRepository;
-    //private jwtUtil: JwtUtil;
     constructor() {
         this.userRepository = new UserRepository();
     }
@@ -53,23 +53,17 @@ class authService {
             throw new UnauthorizedError('Invalid email or password');
         }
 
-        const isValid = await verifyPassword(password, user.password);
-        if (!isValid) {
+        const isPasswordValid = await verifyPassword(password, user.password);
+        if (!isPasswordValid) {
             logger.error('wrong password');
             throw new UnauthorizedError('Invalid email or password');
         }
 
-        const accessToken = jwt.sign(
-            { userId: user.id },
-            'process.env.JWT_ACCESS_SECRET',
-            { expiresIn: '15m' }
+        const accessToken = generateAccessToken(
+            { sub: user.uuid } /*, roles: string[]*/
         );
-        const refreshToken = jwt.sign(
-            { userId: user.id },
-            'process.env.REFRESH_TOKEN_SECRET',
-            { expiresIn: '7d' }
-        );
-        // await Token.create({ token: refreshToken, userId: user.id });
+        const refreshToken = generateRefreshToken({ sub: user.uuid });
+        refreshTokens.push(refreshToken);
 
         return { accessToken, refreshToken };
     }

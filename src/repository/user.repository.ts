@@ -7,13 +7,26 @@ import {
 import logger from '../utils/logger.util';
 
 class UserRepository {
+    async findById(id: string | number) {
+        return await User.findByPk(id);
+    }
+
+    async findByUid(uid: string) {
+        return await User.findOne({ where: { uid } });
+    }
+
+    async findByEmail(email: string) {
+        return await User.findOne({
+            where: { email } /* include: Role, password, id, uuid */,
+        });
+    }
+    async findAll() {
+        return await User.findAll();
+    }
     async create(creationAttributes: UserCreationAttributes) {
         logger.info(creationAttributes);
         const savedUser = await User.create({ ...creationAttributes });
         return savedUser;
-    }
-    async findByEmail(email: string) {
-        return await User.findOne({ where: { email } });
     }
 
     async exists(user: Partial<User>): Promise<boolean> {
