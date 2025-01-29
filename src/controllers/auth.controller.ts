@@ -6,7 +6,7 @@ class authController {
     async register(req: Request, res: Response, next: NextFunction) {
         try {
             const user = await authService.register(req, res, next);
-            const userDto: UserDto = toDto(user);
+            const userDto = toDto(user);
             res.status(201).json({
                 success: true,
                 message: 'User registered successfully',
@@ -19,11 +19,11 @@ class authController {
 
     async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const result = await authService.login(req, res, next);
+            const data = await authService.login(req, res, next);
             res.status(201).json({
                 success: true,
                 message: 'User logged in successfully',
-                result,
+                data,
             });
         } catch (error) {
             next(error);

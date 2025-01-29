@@ -1,31 +1,50 @@
 import coreJoi, { ObjectSchema } from 'joi';
 import joiDate from '@joi/date';
+import joiPassword from 'joi-password-complexity';
+
 const Joi = coreJoi.extend(joiDate) as typeof coreJoi;
 
-const PASSWORD_REGEX = new RegExp(
-    '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!.@#$%^&*])(?=.{8,})'
-);
-export const signupSchema: ObjectSchema = Joi.object().keys({
-    // username: Joi.string().alphanum().min(3).max(10).required(),
+// Password complexity settings
+const passwordComplexity = {
+    min: 8,
+    max: 32,
+    lowerCase: 1,
+    upperCase: 1,
+    numeric: 1,
+    symbol: 1,
+};
+
+export const signupSchema: ObjectSchema = Joi.object({
     email: Joi.string()
+        .email({ tlds: { allow: ['com', 'net', 'org'] } })
         .required()
-        .email({
-            tlds: { allow: ['com'] },
-        })
-        .message('Please enter a valid email address.'),
-    password: Joi.string().regex(PASSWORD_REGEX).required().messages({
-        'any.only': 'Password must be at least 8 characters',
+        .messages({
+            'string.email': 'Please enter a valid email address.',
+        }),
+
+    password: joiPassword(passwordComplexity).required().messages({
+        'passwordComplexity.tooShort':
+            'Password must be at least 8 characters.',
+        'passwordComplexity.upperCase':
+            'Password must contain at least one uppercase letter.',
+        'passwordComplexity.lowerCase':
+            'Password must contain at least one lowercase letter.',
+        'passwordComplexity.numeric':
+            'Password must contain at least one number.',
+        'passwordComplexity.symbol':
+            'Password must contain at least one special character.',
     }),
-    // confirmPassword: Joi.string()
-    //     .valid(Joi.ref('password'))
-    //     .required()
-    //     .messages({ 'any.only': 'Passwords do not match' }),
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
-    birthDate: Joi.date().format('YYYY-MM-DD'),
+
+    firstName: Joi.string().trim().min(2).max(50).required(),
+    lastName: Joi.string().trim().min(2).max(50).required(),
+
+    birthDate: Joi.date().format('YYYY-MM-DD').max('now').messages({
+        'date.format': 'Birth date must be in YYYY-MM-DD format.',
+        'date.max': 'Birth date cannot be in the future.',
+    }),
 });
 
-export const loginSchema: ObjectSchema = Joi.object().keys({
-    email: Joi.string().required(),
+export const loginSchema: ObjectSchema = Joi.object({
+    email: Joi.string().email().required(),
     password: Joi.string().required(),
 });

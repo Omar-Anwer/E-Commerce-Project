@@ -71,14 +71,21 @@ const jwtUtil: JwtUtil = {
         });
     },
 
-    /**
-     * Middleware to protect routes.
-     * @param {Request} req - Express request object.
-     * @param {Response} res - Express response object.
-     * @param {Function} next - Next middleware function.
-     */
+      // const authenticateToken = (req, res, next) => {
+    //     const authHeader = req.headers['authorization'];
+    //     const token = authHeader && authHeader.split(' ')[1];  // Bearer <token>
+    
+    //     if (token == null) return res.sendStatus(401);  // No token present
+    
+    //     jwt.verify(token, SECRET_KEY, (err, user) => {
+    //         if (err) return res.sendStatus(403);  // Invalid token
+    
+    //         req.user = user;
+    //         next();
+    //     });
+    // };
     protectRoute: (req: Request, res: Response, next: NextFunction): void => {
-        const authHeader = req.headers.authorization;
+        const authHeader =  req.headers['authorization'];
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             res.status(401).json({
                 message: 'Access token is missing or invalid',
@@ -86,7 +93,7 @@ const jwtUtil: JwtUtil = {
             return;
         }
 
-        const token = authHeader.split(' ')[1];
+        const token = authHeader.split(' ')[1]; // Bearer <token>
 
         try {
             const decoded = jwtUtil.verifyToken(token);
@@ -122,6 +129,9 @@ const jwtUtil: JwtUtil = {
             throw new Error('Invalid or expired refresh token');
         }
     },
+
+
+
 };
 
 export default jwtUtil;

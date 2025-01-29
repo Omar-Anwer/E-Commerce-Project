@@ -50,13 +50,13 @@ class authService {
         const user = await this.userRepository.findByEmail(email);
         if (!user) {
             logger.error('wrong email');
-            throw new UnauthorizedError('Invalid credentials');
+            throw new UnauthorizedError('Invalid email or password');
         }
 
-        const isMatch = await verifyPassword(password, user.password);
-        if (!isMatch) {
+        const isValid = await verifyPassword(password, user.password);
+        if (!isValid) {
             logger.error('wrong password');
-            throw new UnauthorizedError('Invalid credentials');
+            throw new UnauthorizedError('Invalid email or password');
         }
 
         const accessToken = jwt.sign(
