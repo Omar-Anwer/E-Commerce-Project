@@ -15,33 +15,18 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'secret';
 const JWT_ACCESS_EXPIRY = process.env.JWT_ACCESS_EXPIRY || '15m';
 const JWT_REFRESH_EXPIRY = process.env.JWT_REFRESH_EXPIRY || '7d';
 
-// Utility Implementation
-// const jwtUtil: JwtUtil = {
-/**
- * Verify a token (access or refresh).
- * @param {string} token - The token to verify.
- * @param {boolean} isRefresh - Whether the token is a refresh token.
- * @returns {Object} - The decoded payload.
- */
-//const token = req.headers['x-access-token']; // assuming the token is in the x-access-token header
-export const verifyToken = (token: string, isRefresh = false): any => {
-    const secret = isRefresh ? JWT_REFRESH_SECRET : JWT_ACCESS_SECRET;
-    // const decodedPayload = jwt.verify(token, JWT_ACCESS_SECRET, (err, user) => {
-    //     if (err) {
-    //         throw new ForbiddenError();
-    //     }
-    //     //req.user = user;
-    // });
-    //console.info(JSON.stringify(decodedPayload));
 
+export const verifyToken = (token: string, isRefresh = false): any => {
     try {
-        const decodedPayload = jwt.verify(token, JWT_ACCESS_SECRET);
+        const SECRET = isRefresh ? JWT_REFRESH_SECRET : JWT_ACCESS_SECRET;
+        const decodedPayload = jwt.verify(token, SECRET);
         // const public key = fs.readFileSync('./public.pem')
         // pass token + public + algorithm(RS256)
         // return jwt.verify(token, secret) as JwtPayload;
-        logger.info(JSON.stringify(decodedPayload));
+        logger.info(`Decoded JWT: ${JSON.stringify(decodedPayload)}`);
         return decodedPayload;
     } catch (err) {
+        logger.error(`JWT Verification Failed: ${err}`);
         throw new ForbiddenError(`${err}`);
     }
 };
@@ -56,19 +41,18 @@ export const verifyToken = (token: string, isRefresh = false): any => {
 //     // if not, throw an error or redirect to the login page
 // }
 
-/**
- * Generate an access token.
- * @param {Object} payload - The payload to include in the token.
- * @returns {string} - The generated access token.
- */
+
 export const generateAccessToken = (
     payload: JwtPayload,
     roles?: string[]
 ): string => {
     // generate normal user token or admin token
     // const privateKey = fs.readFileSync('admin_private.pem')
+
     //pass payload + privateKey + passphrase + algorithm(RS256)
-    return jwt.sign(payload, JWT_ACCESS_SECRET, {
+    const SECRET = JWT_ACCESS_SECRET;
+    payload['jti'] = crypto.randomUUID(); // Unique token ID
+    return jwt.sign(payload, SECRET, {
         expiresIn: JWT_ACCESS_EXPIRY,
         algorithm: 'HS256',
     });

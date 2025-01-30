@@ -7,7 +7,7 @@ class userController {
         try {
             const users = await userService.getAll(req, res, next);
             const usersDto = users.map((userDto) => toDto(userDto));
-            res.status(201).json({
+            res.status(200).json({
                 success: true,
                 data: usersDto,
             });

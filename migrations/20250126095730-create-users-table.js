@@ -26,6 +26,9 @@ module.exports = {
         birthDate: {
             type: Sequelize.DATEONLY,
             allowNull: false,
+            validate: {
+                isDate: true,
+            },
         },
         email: {
             type: Sequelize.STRING(100),
@@ -37,7 +40,7 @@ module.exports = {
             },
         },
         password: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(255),
             allowNull: false,
             validate: {
                 len: [8, 100],
@@ -53,9 +56,14 @@ module.exports = {
         }
         });
 
+        // Add constraints
+        await queryInterface.sequelize.query(`
+            ALTER TABLE users 
+            ADD CONSTRAINT birth_date_valid CHECK ("birthDate" BETWEEN '1950-01-01' AND CURRENT_DATE);
+        `);
+
         // Add indexes
         await queryInterface.addIndex('users', ['uuid'], { unique: true });
-        await queryInterface.addIndex('users', ['firstName']); // Snake case in the database
         await queryInterface.addIndex('users', ['email'], { unique: true });
     },
 

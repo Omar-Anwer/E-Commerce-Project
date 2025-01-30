@@ -32,43 +32,24 @@ export interface UserCreationAttributes {
 export const User = sequelize.define(
     'User',
     {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-        },
         uuid: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
-            unique: true,
-            allowNull: false,
         },
         firstName: {
             type: DataTypes.STRING(50),
-            allowNull: false,
         },
         lastName: {
             type: DataTypes.STRING(50),
-            allowNull: false,
         },
         birthDate: {
             type: DataTypes.DATEONLY,
-            allowNull: false,
         },
         email: {
             type: DataTypes.STRING(100),
-            unique: true,
-            allowNull: false,
-            validate: {
-                isEmail: true,
-            },
         },
         password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                len: [3, 100],
-            },
+            type: DataTypes.STRING(255),
         },
     },
     {

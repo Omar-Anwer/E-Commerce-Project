@@ -65,10 +65,22 @@ class authService {
         const refreshToken = generateRefreshToken({ sub: user.uuid });
         refreshTokens.push(refreshToken);
 
-        return { accessToken, refreshToken };
+        // Store tokens in secure, HTTP-only cookies
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true,
+        });
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+        });
+
+        //return { accessToken, refreshToken };
     }
 
     async logout(req: Request, res: Response, next: NextFunction) {
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
         //     const { refreshToken } = req.body;
         //     await Token.update({ isRevoked: true }, { where: { token: refreshToken } });
         //     res.status(200).json({ message: 'Logged out successfully' });

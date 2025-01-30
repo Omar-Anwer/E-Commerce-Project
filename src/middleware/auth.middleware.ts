@@ -21,6 +21,7 @@ export const authenticate = (
             req.header('Authorization')?.replace('Bearer ', '') ||
             req.headers['x-auth-token'] ||
             req.cookies?.token;
+        logger.info(`token: ${token}`);
 
         if (!token) {
             throw new UnauthorizedError('Access denied. No token provided.');
