@@ -1,13 +1,44 @@
-import { DataTypes, Sequelize } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../../config/db.connect';
 
+
+export interface Product extends Model {
+
+    id?: number | string;
+    uuid?: string,
+    name: string,
+    description: string,
+    price: number,
+    quantity: number,
+    images: string[],
+    isPublished: boolean,
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
+// Attributes required for user creation
+export interface ProductCreationAttributes {
+    name: string,
+    description: string,
+    price: number,
+    quantity?: number,
+    images?: string[],
+}
+
+
 const Product = sequelize.define(
-    'Products',
+    'Product',
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
+        },
+        uid: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            unique: true,
+            allowNull: false,
         },
         //   vendorId: {
         //     type: DataTypes.INTEGER,
@@ -38,40 +69,47 @@ const Product = sequelize.define(
             allowNull: true,
         },
         price: {
-            type: DataTypes.DECIMAL(10, 2),
+            type: DataTypes.DECIMAL(10, 2).UNSIGNED,
             allowNull: false,
             validate: {
                 min: 0.01,
             },
         },
-        stockQuantity: {
-            type: DataTypes.INTEGER,
+        quantity: {
+            type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             validate: {
                 min: 0,
             },
+        },
+        images: {
+            type: DataTypes.ARRAY(DataTypes.STRING),
+            allowNull: true,
         },
         isPublished: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
             allowNull: false,
         },
+        averageRating: {
+            type: DataTypes.FLOAT.UNSIGNED,
+            allowNull: false,
+            defaultValue: 0,
+            validate: {
+                min: 0,
+                max: 5,
+            },
+        },
+        totalReviews: {
+            type: DataTypes.BIGINT.UNSIGNED,
+            allowNull: false,
+            defaultValue: 0,
+        },
     },
     {
         tableName: 'products',
-        underscored: true,
         timestamps: true,
         // paranoid: true,   // Adds a deletedAt
-        indexes: [
-            {
-                unique: false,
-                fields: ['name'],
-            },
-            {
-                unique: false,
-                fields: ['price'],
-            },
-        ],
     }
 );
 

@@ -28,16 +28,6 @@ export default {
                 type: DataTypes.ENUM('ACTIVE', 'IDLE', 'LOCKED'),
                 allowNull: false,
             },
-            ipAddress: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
-            ipWhitelist: {
-                type: DataTypes.ARRAY(DataTypes.STRING),
-                defaultValue: [],
-                comment:
-                    'List of IP addresses allowed to interact with the account.',
-            },
         });
     },
 

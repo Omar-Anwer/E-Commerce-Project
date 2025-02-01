@@ -1,10 +1,4 @@
-import {
-    DataTypes,
-    InferAttributes,
-    InferCreationAttributes,
-    Model,
-    Optional,
-} from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../config/db.connect';
 import { hashPassword } from '../../utils/hash.util';
 
@@ -32,7 +26,7 @@ export interface UserCreationAttributes {
 export const User = sequelize.define(
     'User',
     {
-        uuid: {
+        uid: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
         },

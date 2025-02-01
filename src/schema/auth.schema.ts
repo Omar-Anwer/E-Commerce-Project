@@ -15,13 +15,23 @@ const passwordComplexity = {
 };
 
 export const signupSchema: ObjectSchema = Joi.object({
+    firstName: Joi.string().trim().min(2).max(50).required(),
+    lastName: Joi.string().trim().min(2).max(50).required(),
+
+    birthDate: Joi.date().format('YYYY-MM-DD').max('now').messages({
+        'date.format': 'Birth date must be in YYYY-MM-DD format.',
+        'date.max': 'Birth date cannot be in the future.',
+    }),
     email: Joi.string()
+        .trim()
         .email({ tlds: { allow: ['com', 'net', 'org'] } })
         .required()
         .messages({
-            'string.email': 'Please enter a valid email address.',
+            'string.email': 'Email must be a valid email address',
+            'string.trim':
+                'Email may not contain any spaces at the beginning or end', // seems to be unnecessary
+            'string.empty': 'Email is required',
         }),
-
     password: joiPassword(passwordComplexity).required().messages({
         'passwordComplexity.tooShort':
             'Password must be at least 8 characters.',
@@ -34,15 +44,7 @@ export const signupSchema: ObjectSchema = Joi.object({
         'passwordComplexity.symbol':
             'Password must contain at least one special character.',
     }),
-
-    firstName: Joi.string().trim().min(2).max(50).required(),
-    lastName: Joi.string().trim().min(2).max(50).required(),
-
-    birthDate: Joi.date().format('YYYY-MM-DD').max('now').messages({
-        'date.format': 'Birth date must be in YYYY-MM-DD format.',
-        'date.max': 'Birth date cannot be in the future.',
-    }),
-});
+})//.strict(); // Prevents ignored rules;
 
 export const loginSchema: ObjectSchema = Joi.object({
     email: Joi.string().email().required(),

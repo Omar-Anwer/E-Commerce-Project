@@ -42,6 +42,8 @@ const corsOptions = {
 console.log(PERMISSIONS);
 
 // Middleware
+// Logging middleware (optional, if using pino-http)
+// app.use(pinoHttp({ logger }));
 app.use(cookieParser());
 app.use(cors(corsOptions)); // Enable CORS with specific options
 app.use(helmet()); // Set security HTTP headers
@@ -61,9 +63,6 @@ app.use(
         },
     })
 );
-
-// Logging middleware (optional, if using pino-http)
-// app.use(pinoHttp({ logger }));
 
 // Routes
 //app.use('/api/v1/dashboard', dashboardRoutes);

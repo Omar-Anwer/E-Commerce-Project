@@ -15,25 +15,7 @@ export const UserCredentials = sequelize.define('userCredentials', {
         onDelete: 'CASCADE',
         allowNull: false,
     },
-    salt: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
 
-    /* Tokens */
-    accessToken: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    isRevoked: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-    },
-    verificationToken: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        comment: 'Stores a token for email/phone verification purposes.',
-    },
     /*Account Recovery*/
     resetPasswordToken: {
         type: DataTypes.STRING,

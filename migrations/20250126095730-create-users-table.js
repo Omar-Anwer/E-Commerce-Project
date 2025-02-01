@@ -4,26 +4,26 @@
 module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.createTable('users', {
-          id: {
+        id: {
             type: Sequelize.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        uuid: {
+        uid: {
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
             unique: true,
             allowNull: false,
         },
-        firstName: {
+        first_name: {
             type: Sequelize.STRING(50),
             allowNull: false,
         },
-        lastName: {
+        last_name: {
             type: Sequelize.STRING(50),
             allowNull: false,
         },
-        birthDate: {
+        birth_date: {
             type: Sequelize.DATEONLY,
             allowNull: false,
             validate: {
@@ -46,24 +46,28 @@ module.exports = {
                 len: [8, 100],
             },
         },
-        createdAt: {
+        created_at: {
+          type: Sequelize.DATE,
           allowNull: false,
-          type: Sequelize.DATE
+          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+
         },
-        updatedAt: {
+        updated_at: {
+          type: Sequelize.DATE,
           allowNull: false,
-          type: Sequelize.DATE
+          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+
         }
         });
 
         // Add constraints
         await queryInterface.sequelize.query(`
             ALTER TABLE users 
-            ADD CONSTRAINT birth_date_valid CHECK ("birthDate" BETWEEN '1950-01-01' AND CURRENT_DATE);
+            ADD CONSTRAINT birth_date_valid CHECK ("birth_date" BETWEEN '1950-01-01' AND CURRENT_DATE);
         `);
 
         // Add indexes
-        await queryInterface.addIndex('users', ['uuid'], { unique: true });
+        await queryInterface.addIndex('users', ['uid'], { unique: true });
         await queryInterface.addIndex('users', ['email'], { unique: true });
     },
 

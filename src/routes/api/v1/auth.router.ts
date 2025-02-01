@@ -2,7 +2,7 @@ import { Router } from 'express';
 // import { signup } from '../../../controllers/auth.controller';
 import authController from '../../../controllers/auth.controller';
 
-import { validateBodyMiddleware } from '../../../middleware/schema.validator.middleware';
+import { validateBodyMiddleware } from '../../../middleware/schemaValidator.middleware';
 import { loginSchema, signupSchema } from '../../../schema/auth.schema';
 import { createAccountLimiter } from '../../../middleware/rateLimit.middleware';
 import cookieParser from 'cookie-parser';

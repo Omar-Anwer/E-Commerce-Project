@@ -16,6 +16,11 @@ const sequelize = new Sequelize(
             ? (msg) => logger.info(`Sequelize: ${msg}`)
             : false,
         pool: config.pool,
+        define: {
+            underscored: true, // Auto-convert all camelCase to snake_case
+            createdAt: 'created_at', // Optional: Explicitly map timestamps
+            updatedAt: 'updated_at',
+        },
     }
 );
 
