@@ -66,6 +66,7 @@ app.use(
 // app.use(pinoHttp({ logger }));
 
 // Routes
+//app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/health', healthRoutes);

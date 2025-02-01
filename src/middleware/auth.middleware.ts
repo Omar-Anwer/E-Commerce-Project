@@ -14,13 +14,10 @@ export const authenticate = (
         if (req.method === 'OPTIONS') {
             next();
         }
-        //const authHeader = req.headers['authorization'];
-        //req.headers['x-auth-token'] || req.cookies.token;
-        //const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
         const token =
-            req.header('Authorization')?.replace('Bearer ', '') ||
-            req.headers['x-auth-token'] ||
-            req.cookies?.token;
+            req.cookies?.token ||
+            req.headers.authorization?.replace('Bearer ', '') ||
+            req.headers['x-auth-token'];
         logger.info(`token: ${token}`);
 
         if (!token) {

@@ -79,11 +79,28 @@ class authService {
     }
 
     async logout(req: Request, res: Response, next: NextFunction) {
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
+        // Clear Token on Client → Remove token from storage (cookies/localStorage).
+        res.clearCookie('accessToken', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+        });
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+        });
+        // Mark revoked (Stateful Logout (Session-Based))
         //     const { refreshToken } = req.body;
         //     await Token.update({ isRevoked: true }, { where: { token: refreshToken } });
         //     res.status(200).json({ message: 'Logged out successfully' });
+
+        //Blacklist Token (Optional) → Store revoked tokens in Redis/DB.
+        // import redisClient from '../config/redis'; // Assume Redis is set up
+
+        // export const revokeToken = async (jti: string, expiresIn: number) => {
+        //     await redisClient.setex(`blacklist:${jti}`, expiresIn, 'revoked');
+        // };
     }
 
     async refresh(req: Request, res: Response, next: NextFunction) {

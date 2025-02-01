@@ -7,6 +7,9 @@ import { validateEnvVars } from './validateEnvVars';
 import { ForbiddenError } from '../errors/accessForbidden.error';
 import logger from './logger.util';
 
+// import Redis from 'ioredis';
+// const redisClient = new Redis(); // Default Redis connection
+
 dotenv.config();
 
 // Environment variables
@@ -15,7 +18,6 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'secret';
 const JWT_ACCESS_EXPIRY = process.env.JWT_ACCESS_EXPIRY || '15m';
 const JWT_REFRESH_EXPIRY = process.env.JWT_REFRESH_EXPIRY || '7d';
 
-
 export const verifyToken = (token: string, isRefresh = false): any => {
     try {
         const SECRET = isRefresh ? JWT_REFRESH_SECRET : JWT_ACCESS_SECRET;
@@ -23,12 +25,23 @@ export const verifyToken = (token: string, isRefresh = false): any => {
         // const public key = fs.readFileSync('./public.pem')
         // pass token + public + algorithm(RS256)
         // return jwt.verify(token, secret) as JwtPayload;
+
+        // Check if the token is revoked
+        // const isRevoked = await redisClient.get(`revoked:${decoded.jti}`);
+        // if (isRevoked) {
+        //     throw new Error('Token has been revoked');
+        // }
         logger.info(`Decoded JWT: ${JSON.stringify(decodedPayload)}`);
         return decodedPayload;
     } catch (err) {
         logger.error(`JWT Verification Failed: ${err}`);
         throw new ForbiddenError(`${err}`);
     }
+};
+
+export const revokeToken = async (jti: string, expiresIn: number) => {
+    //const key = `revoked:${jti}`;
+    //await redisClient.setex(key, expiresIn, 'revoked'); // Store with expiry
 };
 
 // verifyAuthority() => {
@@ -41,7 +54,6 @@ export const verifyToken = (token: string, isRefresh = false): any => {
 //     // if not, throw an error or redirect to the login page
 // }
 
-
 export const generateAccessToken = (
     payload: JwtPayload,
     roles?: string[]
@@ -51,8 +63,8 @@ export const generateAccessToken = (
 
     //pass payload + privateKey + passphrase + algorithm(RS256)
     const SECRET = JWT_ACCESS_SECRET;
-    payload['jti'] = crypto.randomUUID(); // Unique token ID
-    return jwt.sign(payload, SECRET, {
+    const tokenPayload = { ...payload, jti: crypto.randomUUID() };
+    return jwt.sign(tokenPayload, SECRET, {
         expiresIn: JWT_ACCESS_EXPIRY,
         algorithm: 'HS256',
     });

@@ -16,9 +16,12 @@ const router = Router();
 // }
 // router.use(hpp(hppOptions));
 
+// POST    /sessions      # Login   Creates a new session (token or cookie) on login. (returns JWT token)
+// DELETE  /sessions/{id}  # Logout Delete with  for logout.  (revoke token)
+
 router.use(cookieParser(process.env.COOKIE_SECRET || 'your_secret_key'));
 router.post(
-    '/register',
+    '/signup',
     createAccountLimiter,
     validateBodyMiddleware(signupSchema),
     // verify Authentication
@@ -32,10 +35,16 @@ router.post(
     authController.login
 );
 
+router.post(
+    '/logout',
+    validateBodyMiddleware(loginSchema),
+    authController.logout
+);
+
 // // Admin
 // router.use(authService.allowedTo('admin', 'manager'));
 // router.put(
-//   '/changePassword/:id',
+//   '/change-password/:id',
 //   changeUserPasswordValidator,
 //   changeUserPassword
 // );

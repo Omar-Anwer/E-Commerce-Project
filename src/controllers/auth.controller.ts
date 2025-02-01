@@ -22,9 +22,18 @@ class authController {
             const data = await authService.login(req, res, next);
             res.status(200).json({
                 success: true,
-                message: 'User logged in successfully',
+                message: 'Logged in successfully',
                 data,
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async logout(req: Request, res: Response, next: NextFunction) {
+        try {
+            await authService.logout(req, res, next);
+            res.status(200).json({ message: 'Logged out successfully' });
         } catch (error) {
             next(error);
         }

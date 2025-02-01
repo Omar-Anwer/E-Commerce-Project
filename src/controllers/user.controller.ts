@@ -5,10 +5,17 @@ import { toDto, UserDto } from '../dtos/user.dto';
 class userController {
     async getAll(req: Request, res: Response, next: NextFunction) {
         try {
-            const users = await userService.getAll(req, res, next);
-            const usersDto = users.map((userDto) => toDto(userDto));
+            ///users?id=1&date{from}&sort=-email&page=1&page_size=10&date_min=1999-04-1
+            const result = await userService.getAll(req, res, next);
+            const { totalItems, totalPages, data } = result;
+            const usersDto = data.map((userDto) => toDto(userDto));
             res.status(200).json({
                 success: true,
+                totalItems,
+                totalPages,
+                currentPage: req.query.page,
+                perPage: req.query.page_size,
+                // totalCount: usersDto.length,
                 data: usersDto,
             });
         } catch (error) {

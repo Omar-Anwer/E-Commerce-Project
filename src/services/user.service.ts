@@ -1,6 +1,8 @@
 import { NotFoundError } from '../errors/notFound.error';
 import UserRepository from '../repository/user.repository';
 import { Request, Response, NextFunction } from 'express';
+import { QueryBuilder } from '../utils/query.util';
+import { User } from '../models/user/user.model';
 
 class userService {
     private userRepository: UserRepository;
@@ -9,7 +11,14 @@ class userService {
     }
 
     async getAll(req: Request, res: Response, next: NextFunction) {
-        const users = await this.userRepository.findAll();
+        const queryBuilder = new QueryBuilder('users', req.query, User);
+        const users = await queryBuilder
+            .filter()
+            .sort()
+            .paginate()
+            .search()
+            .build();
+        //const users = await this.userRepository.findAll();
         return users;
     }
 
