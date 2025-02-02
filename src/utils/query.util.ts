@@ -18,6 +18,7 @@ const columnMappings: Record<string, Record<string, string>> = {
     },
     products: {
         name: 'name',
+        description: 'description',
         // category: 'category_id',
         price: 'price',
         // rating: 'average_rating',
@@ -122,11 +123,12 @@ export class QueryBuilder<T extends Model> {
     }
 
     sort(): this {
-        if (!this.queryParams.sort) {
+        const query = this.queryParams.sort;
+        if (!query) {
             return this;
         }
 
-        this.order = this.queryParams.sort
+        this.order = query
             .split(',')
             .map((s: string): OrderItem | null => {
                 const direction = s.startsWith('-') ? 'DESC' : 'ASC';
@@ -135,6 +137,38 @@ export class QueryBuilder<T extends Model> {
                 return dbColumn ? [dbColumn, direction] : null;
             })
             .filter(Boolean) as OrderItem[];
+
+        return this;
+    }
+
+    search(): this {
+        const query = this.queryParams.q;
+        console.info(`Searching...${query}`);
+
+        if (!query || typeof query !== 'string') {
+            return this;
+        }
+
+        //Trim, escape, and split query into individual words
+        const keywords = query
+            .trim()
+            .split(/\s*\+\s*/) // Split on `+`, allowing spaces before/after
+            .map(escapeRegExp); // Escape each keyword
+
+        const searchableFields = ['name', 'description']; // Fields to search in
+        const searchConditions: any = [];
+
+        for (const keyword of keywords) {
+            const fieldConditions = searchableFields.map((field) => ({
+                [field]: { [Op.iLike]: `%${keyword}%` },
+            }));
+
+            searchConditions.push({ [Op.or]: fieldConditions });
+        }
+
+        if (searchConditions.length > 0) {
+            this.where[Op.and] = searchConditions; // Require all keywords to be present
+        }
 
         return this;
     }

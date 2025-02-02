@@ -1,30 +1,27 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../../config/db.connect';
 
-
 export interface Product extends Model {
-
     id?: number | string;
-    uuid?: string,
-    name: string,
-    description: string,
-    price: number,
-    quantity: number,
-    images: string[],
-    isPublished: boolean,
+    uuid?: string;
+    name: string;
+    description: string;
+    price: number;
+    quantity: number;
+    images: string[];
+    isPublished: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
 // Attributes required for user creation
 export interface ProductCreationAttributes {
-    name: string,
-    description: string,
-    price: number,
-    quantity?: number,
-    images?: string[],
+    name: string;
+    description: string;
+    price: number;
+    quantity?: number;
+    images?: string[];
 }
-
 
 export const Product = sequelize.define(
     'Product',
@@ -89,7 +86,7 @@ export const Product = sequelize.define(
         condition: {
             type: DataTypes.ENUM('new', 'used', 'refurbished'),
             defaultValue: 'new',
-            allowNull: false
+            allowNull: false,
         },
         isPublished: {
             type: DataTypes.BOOLEAN,

@@ -44,7 +44,7 @@ export const signupSchema: ObjectSchema = Joi.object({
         'passwordComplexity.symbol':
             'Password must contain at least one special character.',
     }),
-})//.strict(); // Prevents ignored rules;
+}); //.strict(); // Prevents ignored rules;
 
 export const loginSchema: ObjectSchema = Joi.object({
     email: Joi.string().email().required(),

@@ -12,21 +12,13 @@ class productService {
 
     async getAll(req: Request, res: Response, next: NextFunction) {
         const queryBuilder = new QueryBuilder('products', req.query, Product);
-        const products = await queryBuilder
-            .filter()
-            //.search()
-            .sort()
-            .paginate()
-            .build();
+        const products = await queryBuilder.filter().sort().paginate().build();
         //const products = await this.productRepository.findAll();
         return products;
     }
     async search(req: Request, res: Response, next: NextFunction) {
         const queryBuilder = new QueryBuilder('products', req.query, Product);
-        const products = await queryBuilder
-            //.search()
-            .paginate()
-            .build();
+        const products = await queryBuilder.search().paginate().build();
         return products;
     }
 

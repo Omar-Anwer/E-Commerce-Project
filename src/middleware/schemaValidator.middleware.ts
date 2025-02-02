@@ -14,26 +14,34 @@ const trimStringFields = (obj: any) => {
 };
 
 // Generic validation middleware with trimming
-const validateWithTrim = (schema: Schema, source: 'body' | 'query'): RequestHandler => {
+const validateWithTrim = (
+    schema: Schema,
+    source: 'body' | 'query'
+): RequestHandler => {
     return (req: Request, res: Response, next: NextFunction) => {
         trimStringFields(req[source]); // Trim before validation
 
-        const { error } = schema.validate(req[source], { 
-            abortEarly: false, 
-            stripUnknown: true  // Remove unknown fields
+        const { error } = schema.validate(req[source], {
+            abortEarly: false,
+            stripUnknown: true, // Remove unknown fields
         });
 
         if (error) {
-            return next(new ValidationError(error.details.map(err => err.message).join(', ')));
+            return next(
+                new ValidationError(
+                    error.details.map((err) => err.message).join(', ')
+                )
+            );
         }
 
         next();
     };
 };
 
-export const validateBodyMiddleware = (schema: Schema) => validateWithTrim(schema, 'body');
-export const validateQueryMiddleware = (schema: Schema) => validateWithTrim(schema, 'query');
-
+export const validateBodyMiddleware = (schema: Schema) =>
+    validateWithTrim(schema, 'body');
+export const validateQueryMiddleware = (schema: Schema) =>
+    validateWithTrim(schema, 'query');
 
 // import { Request, Response, NextFunction, RequestHandler } from 'express';
 // import { Schema } from 'joi';

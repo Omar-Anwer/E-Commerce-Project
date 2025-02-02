@@ -21,10 +21,8 @@ import { authenticate } from '../../../middleware/auth.middleware';
 
 const router = Router();
 
-
-router.route('/:id').get(/*authenticate, */productController.getById);
-router.route('/search').get(/*authenticate, */productController.search);
-router.route('/').get(/*authenticate, */productController.getAll);
+router.route('/search').get(/*authenticate, */ productController.search);
+router.route('/:id').get(/*authenticate, */ productController.getById);
+router.route('/').get(/*authenticate, */ productController.getAll);
 
 export default router;
-

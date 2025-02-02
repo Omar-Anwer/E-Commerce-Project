@@ -1,8 +1,5 @@
 import { Op, ModelStatic, Transaction } from 'sequelize';
-import {
-    User,
-    UserCreationAttributes,
-} from '../models/user/user.model'; // Import your Sequelize User model
+import { User, UserCreationAttributes } from '../models/user/user.model'; // Import your Sequelize User model
 import logger from '../utils/logger.util';
 
 class UserRepository {

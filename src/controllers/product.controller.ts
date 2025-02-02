@@ -16,7 +16,7 @@ class productController {
                 currentPage: req.query.page,
                 perPage: req.query.page_size,
                 // totalCount: productsDto.length,
-                data: data//productsDto,
+                data: data, //productsDto,
             });
         } catch (error) {
             next(error);
@@ -34,7 +34,7 @@ class productController {
                 currentPage: req.query.page,
                 perPage: req.query.page_size,
                 // totalCount: productsDto.length,
-                data: data//productsDto,
+                data: data, //productsDto,
             });
         } catch (error) {
             next(error);
@@ -44,10 +44,10 @@ class productController {
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const product = await productService.getById(req, res, next);
-           // const productDto = toDto(product);
+            // const productDto = toDto(product);
             res.status(200).json({
                 success: true,
-                data: product//productDto,
+                data: product, //productDto,
             });
         } catch (error) {
             next(error);
