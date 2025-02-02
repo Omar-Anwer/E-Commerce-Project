@@ -12,6 +12,7 @@ class productService {
 
     async getAll(req: Request, res: Response, next: NextFunction) {
         const queryBuilder = new QueryBuilder('products', req.query, Product);
+        console.info(queryBuilder);
         const products = await queryBuilder.filter().sort().paginate().build();
         //const products = await this.productRepository.findAll();
         return products;

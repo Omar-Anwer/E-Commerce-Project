@@ -18,6 +18,7 @@ import productRoutes from './routes/api/v1/product.router';
 import { NotFoundError } from './errors/notFound.error';
 import cookieParser from 'cookie-parser';
 import { PERMISSIONS } from './config/roles';
+import { captureUserInfo } from './middleware/ua.middleware';
 
 // Load environment variables
 dotenv.config();
@@ -45,6 +46,7 @@ console.log(PERMISSIONS);
 // Middleware
 // Logging middleware (optional, if using pino-http)
 // app.use(pinoHttp({ logger }));
+app.use(captureUserInfo);
 app.use(cookieParser());
 app.use(cors(corsOptions)); // Enable CORS with specific options
 app.use(helmet()); // Set security HTTP headers

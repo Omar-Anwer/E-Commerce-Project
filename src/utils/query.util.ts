@@ -10,10 +10,10 @@ import {
 
 const columnMappings: Record<string, Record<string, string>> = {
     users: {
-        fName: 'firstName',
-        lName: 'lastName',
+        fName: 'first_name',
+        lName: 'last_name',
         email: 'email',
-        date: 'birthDate',
+        date: 'birth_date',
         id: 'id',
     },
     products: {
