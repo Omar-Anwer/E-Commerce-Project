@@ -14,6 +14,7 @@ import authRoutes from './routes/api/v1/auth.router';
 import homeRoutes from './routes/api/v1/home.router';
 import healthRoutes from './routes/api/v1/health.router';
 import userRoutes from './routes/api/v1/user.router';
+import productRoutes from './routes/api/v1/product.router';
 import { NotFoundError } from './errors/notFound.error';
 import cookieParser from 'cookie-parser';
 import { PERMISSIONS } from './config/roles';
@@ -68,6 +69,7 @@ app.use(
 //app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/', homeRoutes);
 

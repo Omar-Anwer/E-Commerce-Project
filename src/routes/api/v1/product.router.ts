@@ -13,8 +13,18 @@ POST /reviews/{id}/report		Report abusive reviews
 PUT   /products/{id}		   Update a product (admin)	
 PATCH /products/{id}/inventory Update stock quantity	Body: { stock: 50 }
 
-
-
-
-
  */
+
+import { Router } from 'express';
+import productController from '../../../controllers/product.controller';
+import { authenticate } from '../../../middleware/auth.middleware';
+
+const router = Router();
+
+
+router.route('/:id').get(/*authenticate, */productController.getById);
+router.route('/search').get(/*authenticate, */productController.search);
+router.route('/').get(/*authenticate, */productController.getAll);
+
+export default router;
+

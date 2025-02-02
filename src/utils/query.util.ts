@@ -17,9 +17,9 @@ const columnMappings: Record<string, Record<string, string>> = {
         id: 'id',
     },
     products: {
-        // name: 'product_name',
+        name: 'name',
         // category: 'category_id',
-        // price: 'product_price',
+        price: 'price',
         // rating: 'average_rating',
         // inStock: 'stock_available',
     },
@@ -139,30 +139,31 @@ export class QueryBuilder<T extends Model> {
         return this;
     }
 
-    search(): this {
-        const query = this.queryParams.q;
-        if (!query) {
-            return this;
-        }
+    // search(): this {
+    //     console.info('Searching');
+    //     const query = this.queryParams.q;
+    //     if (!query) {
+    //         return this;
+    //     }
 
-        const sanitizedQuery = escapeRegExp(query.trim());
-        const searchConditions: any = [];
+    //     const sanitizedQuery = escapeRegExp(query.trim());
+    //     const searchConditions: any = [];
 
-        query.split('+').forEach((apiColumn: string) => {
-            const dbColumn = this.mapColumn(apiColumn);
-            if (dbColumn) {
-                searchConditions.push({
-                    [dbColumn]: { [Op.iLike]: `%${sanitizedQuery}%` },
-                });
-            }
-        });
+    //     query.split('+').forEach((apiColumn: string) => {
+    //         const dbColumn = this.mapColumn(apiColumn);
+    //         if (dbColumn) {
+    //             searchConditions.push({
+    //                 [dbColumn]: { [Op.iLike]: `%${sanitizedQuery}%` },
+    //             });
+    //         }
+    //     });
 
-        if (searchConditions.length > 0) {
-            this.where[Op.or] = searchConditions;
-        }
+    //     if (searchConditions.length > 0) {
+    //         this.where[Op.or] = searchConditions;
+    //     }
 
-        return this;
-    }
+    //     return this;
+    // }
 
     async build() {
         const queryOptions: FindAndCountOptions<T> = {

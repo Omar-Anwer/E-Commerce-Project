@@ -1,7 +1,6 @@
 import { Op, ModelStatic, Transaction } from 'sequelize';
 import {
     User,
-    //UserModel,
     UserCreationAttributes,
 } from '../models/user/user.model'; // Import your Sequelize User model
 import logger from '../utils/logger.util';

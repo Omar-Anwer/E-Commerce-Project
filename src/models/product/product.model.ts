@@ -26,7 +26,7 @@ export interface ProductCreationAttributes {
 }
 
 
-const Product = sequelize.define(
+export const Product = sequelize.define(
     'Product',
     {
         id: {
@@ -86,12 +86,17 @@ const Product = sequelize.define(
             type: DataTypes.ARRAY(DataTypes.STRING),
             allowNull: true,
         },
+        condition: {
+            type: DataTypes.ENUM('new', 'used', 'refurbished'),
+            defaultValue: 'new',
+            allowNull: false
+        },
         isPublished: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
             allowNull: false,
         },
-        averageRating: {
+        avgRating: {
             type: DataTypes.FLOAT.UNSIGNED,
             allowNull: false,
             defaultValue: 0,
@@ -112,5 +117,3 @@ const Product = sequelize.define(
         // paranoid: true,   // Adds a deletedAt
     }
 );
-
-export default Product;

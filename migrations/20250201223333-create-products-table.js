@@ -33,15 +33,20 @@ module.exports = {
         defaultValue: 0
       },
       images: {
-        type: Sequelize.ARRAY(Sequelize.TEXT), // Use TEXT for PostgreSQL arrays
+        type: Sequelize.ARRAY(Sequelize.STRING), // Use TEXT for PostgreSQL arrays
         allowNull: true
+      },
+      condition: {
+        type: Sequelize.ENUM('new', 'used', 'refurbished'),
+        defaultValue: 'new',
+        allowNull: false
       },
       is_published: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
         allowNull: false
       },
-      averageRating: {
+      avg_rating: {
           type: Sequelize.FLOAT.UNSIGNED,
           allowNull: false,
           defaultValue: 0,
@@ -50,7 +55,7 @@ module.exports = {
               max: 5,
           },
       },
-      totalReviews: {
+      total_reviews: {
           type: Sequelize.BIGINT.UNSIGNED,
           allowNull: false,
           defaultValue: 0,

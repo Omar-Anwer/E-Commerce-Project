@@ -1,0 +1,36 @@
+📦 products (Main Product Table)
+   - id (PK) 🔹
+   - uid (UUID, Unique) 🔹
+   - name 🔹
+   - description
+   - base_price 🔹
+   - is_published (BOOLEAN, Indexed) 🔹
+   - created_at
+   - updated_at
+
+🎨 product_variants (Product Variations)
+   - id (PK) 🔹
+   - product_id (FK → products) 🔹
+   - sku (Unique, Indexed) 🔹
+   - color 🔹
+   - size 🔹
+   - stock_quantity 🔹
+   - price 🔹
+   - created_at
+   - updated_at
+
+⚡ variant_options (JSON Custom Attributes)
+   - id (PK) 🔹
+   - variant_id (FK → product_variants) 🔹
+   - options (JSONB) 🔹
+   - created_at
+   - updated_at
+
+🔧 customizations (Extra Custom Features)
+   - id (PK) 🔹
+   - variant_id (FK → product_variants) 🔹
+   - type (Enum: "engraving", "gift_wrapping", "message") 🔹
+   - value
+   - price_adjustment 🔹
+   - created_at
+   - updated_at

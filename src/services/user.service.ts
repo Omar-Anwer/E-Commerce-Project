@@ -16,7 +16,7 @@ class userService {
             .filter()
             .sort()
             .paginate()
-            .search()
+           // .search()
             .build();
         //const users = await this.userRepository.findAll();
         return users;
