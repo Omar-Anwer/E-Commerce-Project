@@ -18,8 +18,9 @@ const sequelize = new Sequelize(
         pool: config.pool,
         define: {
             underscored: true, // Auto-convert all camelCase to snake_case
-            createdAt: 'created_at', // Optional: Explicitly map timestamps
+            createdAt: 'created_at',
             updatedAt: 'updated_at',
+            deletedAt: 'deleted_at',
         },
     }
 );
