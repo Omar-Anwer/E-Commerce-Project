@@ -1,6 +1,18 @@
+# Ignore Os-specific files
 .DS_Store
+Thumbs.db
+
+# Ignore IDE/editor files
 .vscode
+.idea/
+*.swp
+*.swo
+
+# Environment variables
 .env
+.env.*
+
+# Node files
 node_modules/
 dist/
 package-lock.json
