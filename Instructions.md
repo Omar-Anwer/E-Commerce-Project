@@ -103,16 +103,70 @@ docker run --restart always --name postgres_db -p 5432:5432 -e POSTGRES_DB=store
 
 Database
 --------
+- Conventions
 - Use underscore_names instead of CamelCase
 - Table names should be plural
 - Don't use ambiguous column names
 - When possible, name foreign key columns the same as the columns they refer to
 
-- Use Cases of Transactions
+- Transactions
 - Ensuring data consistency in multi-step operations (e.g., placing an order while updating stock).
 - Rollback changes in case of an error.
 - Maintaining integrity during concurrent operations.
 
+Caching 
+-----------
+- Use Redis
+npm install redis && npm install --save-dev @types/redis
+npm install ioredis && npm install --save-dev @types/ioredis
+docker run -d --name redis -p 6379:6379 redis:latest
+
+- Redis insight
+host.docker.internal:6379
+docker run -d --name redisinsight -p 5540:5540 redis/redisinsight:latest -v redisinsight:/data
+
+Use Case          | Description
+_________________________________
+Product Caching   | Cache popular or recently viewed products to reduce DB hits
+Cart Storage      | Temporarily store user carts in Redis (cart:userId → JSON)
+Session Storage   | Store JWT session data, blacklist tokens, etc.
+Rate Limiting     | Prevent abuse with IP/user-based rate limits
+Inventory Control | Lock inventory temporarily for flash sales or checkout queues
+Pub/Sub Events    | Real-time notifications (e.g. stock alerts, order status updates)
+Queueing          | With BullMQ or similar for email, payments, etc.
+
+Prefix              | Purpose                                            | Example Key                     | Value Format
+---------------------------------------------------------------------------------------------------------------------------------
+session:            | User session data (JWT/session ID)                 | session:abc123                  | JSON / user info
+user:               | Cached user profile                                | user:42                         | JSON
+cart:               | User shopping cart                                 | cart:user123                    | JSON / Cart items
+product:            | Cached product details                             | product:123                     | JSON
+product:stock:      | Product stock / inventory tracking                 | product:stock:123               | Integer
+rate_limit:         | Rate limiting requests per IP or user              | rate_limit:ip:192.168.0.1       | Integer (count)
+order:              | Temporary or queued order data                     | order:temp:user123              | JSON
+checkout:lock:      | Locking key to prevent multiple checkouts          | checkout:lock:user123           | Any value, TTL-based
+category:           | Cached category data (tree or leaf nodes)          | category:electronics            | JSON
+search:suggestions: | Search auto-complete or recent search caching      | search:suggestions:laptop       | List / Set
+vendor:             | Vendor profile cache                               | vendor:345                      | JSON
+promo:              | Promo code validation or usage tracking            | promo:BLACKFRIDAY2024           | Count or JSON
+inventory:lock:     | Temporary locks for critical inventory updates     | inventory:lock:product123       | Lock / TTL
+queue:              | For Bull queues (email, notifications, etc.)       | queue:email, queue:order-events | JSON
+review:count:       | Store review count or rating aggregate temporarily | review:count:product123         | Integer / Float
+
+
+Searching
+---------
+- Elastic Search
+
+Reliability
+-----------
+- Chaos Monkey 
+
+Scalability
+-----------
+- Define load
+- 1000 query write req/sec or 2000 query read req/sec
+- Load test with locust
 
 Debugging
 ---------
@@ -147,6 +201,23 @@ Testing
 Coding
 ------
 - Follow ES6+ code guidelines
+Js
+- await promise.all (multiple tables)
+- firstName?.trim()?.toLowerCase()?.includes('keyword')
+- prepareFaxDocument() / buildRequestPayload()
+
+const request = {
+  url: `${this.baseUrl}/dd`.
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${token}`
+    'Content-Type': 'application/json' or application/x-www-form-urlencoded
+  },
+  data: {
+    payload
+  }
+}
+- const response = axios(request)
 
 Linting
 -------
